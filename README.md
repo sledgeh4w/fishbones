@@ -14,7 +14,7 @@ $ pip install gravitum
 
 ## Usage
 
-Gravitum defined some types (`Int8`, `Int16`, `Int32`, `Int64`, `UInt8`, `UInt16`, `UInt32`, `UInt64`), which based on the integer types of [numpy](https://github.com/numpy/numpy). You can use short-hand functions (`int8`, `int16`, `int32`, `int64`, `uint8`, `uint16`, `uint32`, `uint64`) to create them.
+Gravitum defined some types (`Int8`, `Int16`, `Int32`, `Int64`, `UInt8`, `UInt16`, `UInt32`, `UInt64`), which are based on the integer types of [numpy](https://github.com/numpy/numpy). You can use short-hand functions (`int8`, `int16`, `int32`, `int64`, `uint8`, `uint16`, `uint32`, `uint64`) to create them.
 
 ```python
 from gravitum import uint8
