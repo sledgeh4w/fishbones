@@ -4,6 +4,22 @@ from typing import Union, Type, SupportsBytes, Iterable, Optional
 
 import numpy as np
 
+# Operation methods to be overrode.
+_OVERRIDE_OPERATIONS = [
+    '__neg__', '__pos__', '__invert__',
+    '__add__', '__radd__', '__iadd__',
+    '__sub__', '__rsub__', '__isub__',
+    '__mul__', '__rmul__', '__imul__',
+    '__truediv__', '__rtruediv__', '__itruediv__',
+    '__floordiv__', '__rfloordiv__', '__ifloordiv__',
+    '__mod__', '__rmod__', '__imod__',
+    '__and__', '__rand__', '__iand__',
+    '__or__', '__ror__', '__ior__',
+    '__xor__', '__rxor__', '__ixor__',
+    '__lshift__', '__rlshift__', '__ilshift__',
+    '__rshift__', '__rrshift__', '__irshift__'
+]
+
 
 class IntMeta(type):
     """Meta class of type int."""
@@ -11,37 +27,19 @@ class IntMeta(type):
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
 
-        # Operation methods to be overrode.
-        operations = [
-            '__neg__', '__pos__', '__invert__',
-            '__add__', '__radd__', '__iadd__',
-            '__sub__', '__rsub__', '__isub__',
-            '__mul__', '__rmul__', '__imul__',
-            '__truediv__', '__rtruediv__', '__itruediv__',
-            '__floordiv__', '__rfloordiv__', '__ifloordiv__',
-            '__mod__', '__rmod__', '__imod__',
-            '__and__', '__rand__', '__iand__',
-            '__or__', '__ror__', '__ior__',
-            '__xor__', '__rxor__', '__ixor__',
-            '__lshift__', '__rlshift__', '__ilshift__',
-            '__rshift__', '__rrshift__', '__irshift__'
-        ]
-
-        for operation in operations:
-            if not hasattr(cls, operation):
+        for opn in _OVERRIDE_OPERATIONS:
+            if not hasattr(cls, opn):
                 continue
-
-            method = getattr(cls, operation)
-            setattr(cls, operation, cls.operate_wrapper(method))
+            setattr(cls, opn, cls.operation_wrapper(getattr(cls, opn)))
 
     @staticmethod
-    def operate_wrapper(f):
+    def operation_wrapper(f):
         """Wrap operation method for overriding type conversion.
 
-        If an unary operation, result is still the own type.
-        If another operand is an int, it will be converted to the own type.
-        If the type of another operand is inconsistent with the own type,
-        they will be converted to a larger size or unsigned type.
+        If it is a unary operation, the result is still its own type.
+        If the other operand is int, it will be converted to its own type.
+        If the type of another operand is inconsistent with its own type,
+        they are converted to larger size or unsigned type.
         """
 
         @wraps(f)
@@ -56,11 +54,13 @@ class IntMeta(type):
 
                 elif isinstance(self, np.integer):
                     if self.itemsize == other.itemsize:
-                        data_type = type(other) if isinstance(self, np.signedinteger) \
+                        data_type = type(other) \
+                            if isinstance(self, np.signedinteger) \
                             else type(self)
 
                     else:
-                        data_type = type(other) if self.itemsize < other.itemsize \
+                        data_type = type(other) \
+                            if self.itemsize < other.itemsize \
                             else type(self)
 
                 return data_type(f(self, other))
@@ -177,4 +177,5 @@ def get_type(
         return Int32 if signed else UInt32
     elif size == 8:
         return Int64 if signed else UInt64
+
     raise NotImplementedError()
