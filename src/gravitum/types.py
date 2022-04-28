@@ -27,10 +27,10 @@ class IntMeta(type):
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
 
-        for opn in _OVERRIDE_OPERATIONS:
-            if not hasattr(cls, opn):
+        for op in _OVERRIDE_OPERATIONS:
+            if not hasattr(cls, op):
                 continue
-            setattr(cls, opn, cls.operation_wrapper(getattr(cls, opn)))
+            setattr(cls, op, cls.operation_wrapper(getattr(cls, op)))
 
     @staticmethod
     def operation_wrapper(f):
