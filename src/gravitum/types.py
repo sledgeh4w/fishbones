@@ -166,6 +166,7 @@ def get_type(
         match = re.match(r'(u*)int(\d+)', type_name)
         if not match:
             raise NotImplementedError()
+
         signed = not bool(match.group(1))
         size = int(match.group(2)) // 8
 
