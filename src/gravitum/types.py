@@ -76,15 +76,7 @@ class IntMixin(np.integer):
     @classmethod
     def get_size(cls) -> int:
         """Get size (bytes) of this type."""
-        if issubclass(cls, np.int8) or issubclass(cls, np.uint8):
-            return 1
-        elif issubclass(cls, np.int16) or issubclass(cls, np.uint16):
-            return 2
-        elif issubclass(cls, np.int32) or issubclass(cls, np.uint32):
-            return 4
-        elif issubclass(cls, np.int64) or issubclass(cls, np.uint64):
-            return 8
-        raise NotImplementedError()
+        return cls.itemsize
 
     @classmethod
     def get_signed(cls) -> bool:
