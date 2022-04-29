@@ -19,44 +19,36 @@ def last_ind(x: IntVar, part_type: IntType) -> int:
     return x.get_size() // part_type.get_size() - 1
 
 
-def low_ind(
-        x: IntVar,
-        part_type: IntType,
-        byteorder: str = LITTLE_ENDIAN
-) -> int:
+def low_ind(x: IntVar, part_type: IntType) -> int:
     """Implementation for `LOW_IND`."""
-    return last_ind(x, part_type) if byteorder == BIG_ENDIAN else 0
+    return last_ind(x, part_type) if BYTE_ORDER == BIG_ENDIAN else 0
 
 
-def high_ind(
-        x: IntVar,
-        part_type: IntType,
-        byteorder: str = LITTLE_ENDIAN
-) -> int:
+def high_ind(x: IntVar, part_type: IntType) -> int:
     """Implementation for `HIGH_IND`."""
-    return 0 if byteorder == BIG_ENDIAN else last_ind(x, part_type)
+    return 0 if BYTE_ORDER == BIG_ENDIAN else last_ind(x, part_type)
 
 
-def offset_n(x: IntVar, n: int, t: IntType, byteorder: str) -> IntVar:
+def offset_n(x: IntVar, n: int, t: IntType) -> IntVar:
     """Get the nth member of the data."""
     size = t.get_size()
-    data = x.to_bytes(byteorder=byteorder)
-    return t.from_bytes(data[n * size: (n + 1) * size], byteorder=byteorder)
+    data = x.to_bytes(byteorder=BYTE_ORDER)
+    return t.from_bytes(data[n * size: (n + 1) * size], byteorder=BYTE_ORDER)
 
 
 def byte_n(x: IntVar, n: int) -> UInt8:
     """Implementation for `BYTEn`."""
-    return offset_n(x, n, UInt8, BYTE_ORDER)
+    return offset_n(x, n, UInt8)
 
 
 def word_n(x: IntVar, n: int) -> UInt16:
     """Implementation for `WORDn`."""
-    return offset_n(x, n, UInt16, BYTE_ORDER)
+    return offset_n(x, n, UInt16)
 
 
 def dword_n(x: IntVar, n: int) -> UInt32:
     """Implementation for `DWORDn`."""
-    return offset_n(x, n, UInt32, BYTE_ORDER)
+    return offset_n(x, n, UInt32)
 
 
 def low_byte(x: IntVar) -> UInt8:
@@ -201,17 +193,17 @@ def word7(x: IntVar) -> UInt8:
 
 def signed_byte_n(x: IntVar, n: int) -> Int8:
     """Implementation for `SBYTEn`."""
-    return offset_n(x, n, Int8, BYTE_ORDER)
+    return offset_n(x, n, Int8)
 
 
 def signed_word_n(x: IntVar, n: int) -> Int16:
     """Implementation for `SWORDn`."""
-    return offset_n(x, n, Int16, BYTE_ORDER)
+    return offset_n(x, n, Int16)
 
 
 def signed_dword_n(x: IntVar, n: int) -> Int32:
     """Implementation for `SDWORDn`."""
-    return offset_n(x, n, Int32, BYTE_ORDER)
+    return offset_n(x, n, Int32)
 
 
 def signed_low_byte(x: IntVar) -> Int8:
@@ -483,25 +475,25 @@ def cfadd(x: IntVar, y: IntVar) -> Int8:
 # Refer to https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html.
 
 
-def swap_bytes(value: IntVar, byteorder: str = BYTE_ORDER) -> IntVar:
+def swap_bytes(value: IntVar) -> IntVar:
     """Reverse bytes of the value with the order."""
-    data = value.to_bytes(byteorder=byteorder)
-    return value.from_bytes(data[::-1], byteorder=byteorder)
+    data = value.to_bytes(byteorder=BYTE_ORDER)
+    return value.from_bytes(data[::-1], byteorder=BYTE_ORDER)
 
 
-def bswap16(value: UInt16, byteorder: str = BYTE_ORDER) -> UInt16:
+def bswap16(value: UInt16) -> UInt16:
     """Implementation for `bswap16`."""
-    return swap_bytes(value, byteorder)
+    return swap_bytes(value)
 
 
-def bswap32(value: UInt32, byteorder: str = BYTE_ORDER) -> UInt32:
+def bswap32(value: UInt32) -> UInt32:
     """Implementation for `bswap32`."""
-    return swap_bytes(value, byteorder)
+    return swap_bytes(value)
 
 
-def bswap64(value: UInt64, byteorder: str = BYTE_ORDER) -> UInt64:
+def bswap64(value: UInt64) -> UInt64:
     """Implementation for `bswap64`."""
-    return swap_bytes(value, byteorder)
+    return swap_bytes(value)
 
 
 def clz(x: IntVar) -> int:
