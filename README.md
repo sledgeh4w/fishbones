@@ -22,7 +22,7 @@ from gravitum import uint8
 v = uint8(1)
 ```
 
-The function `vptr` is provided to wrap `bytearray`, and then you can operate it like a pointer.
+To simulate pointer operations, Gravitun provides function `vptr`.
 
 For a decompiled code:
 
@@ -48,11 +48,11 @@ v = p.add(3).read()
 p.add(4).cast('uint32').add(1).write(v)
 ```
 
-Some functions (`ror*`, `rol*`, `bswap*`, `byte*`, `word*`, `dword*`, `clz`, etc.) maybe useful when implementing IDA decompiled code. You can import them from `gravitum.hexrays`.
+Some functions are often used in the decompiled code of IDA, and Gravitum provides their implementatiion (`ror*`, `rol*`, `bswap*`, `byte*`, `word*`, `dword*`, `clz`, etc.). You can import them from `gravitum.ida`.
 
 ```python
 from gravitum import uint32
-from gravitum.hexrays import ror4
+from gravitum.ida import ror4
 
 v = uint32(1)
 v = ror4(v, 8)
