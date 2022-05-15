@@ -1,8 +1,8 @@
 """Implement functions which are used in the code decompiled of IDA."""
 
 from .types import (
-    Int8, Int16, Int32, UInt8, UInt16, UInt32, UInt64, IntVar, IntType,
-    get_type)
+    Int8, Int16, Int32, UInt8, UInt16, UInt32, UInt64, IntVar, IntType)
+from .utils import get_type
 
 BIG_ENDIAN = 'big'
 LITTLE_ENDIAN = 'little'

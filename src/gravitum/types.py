@@ -1,6 +1,5 @@
-import re
 from functools import wraps
-from typing import Union, Type, SupportsBytes, Iterable, Optional
+from typing import Union, Type, SupportsBytes, Iterable
 
 import numpy as np
 
@@ -148,27 +147,41 @@ IntType = Type[Union[
 ]]
 
 
-def get_type(
-        size: Optional[int] = None,
-        signed: Optional[bool] = None,
-        type_name: Optional[str] = None
-) -> IntType:
-    """Get type int with specified size and signed."""
-    if type_name is not None:
-        match = re.match(r'(u*)int(\d+)', type_name)
-        if not match:
-            raise NotImplementedError()
+def int8(v) -> Int8:
+    """Short-hand for `Int8(v)`."""
+    return Int8(v)
 
-        signed = not bool(match.group(1))
-        size = int(match.group(2)) // 8
 
-    if size == 1:
-        return Int8 if signed else UInt8
-    elif size == 2:
-        return Int16 if signed else UInt16
-    elif size == 4:
-        return Int32 if signed else UInt32
-    elif size == 8:
-        return Int64 if signed else UInt64
+def int16(v) -> Int16:
+    """Short-hand for `Int16(v)`."""
+    return Int16(v)
 
-    raise NotImplementedError()
+
+def int32(v) -> Int32:
+    """Short-hand for `Int32(v)`."""
+    return Int32(v)
+
+
+def int64(v) -> Int64:
+    """Short-hand for `Int64(v)`."""
+    return Int64(v)
+
+
+def uint8(v) -> Int8:
+    """Short-hand for `UInt8(v)`."""
+    return UInt8(v)
+
+
+def uint16(v) -> Int16:
+    """Short-hand for `UInt16(v)`."""
+    return UInt16(v)
+
+
+def uint32(v) -> Int32:
+    """Short-hand for `UInt32(v)`."""
+    return UInt32(v)
+
+
+def uint64(v) -> Int64:
+    """Short-hand for `UInt64(v)`."""
+    return UInt64(v)
