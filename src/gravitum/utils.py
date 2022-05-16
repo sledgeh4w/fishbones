@@ -16,16 +16,21 @@ def get_type(
         if not match:
             raise NotImplementedError()
 
-        signed = not bool(match.group(1))
-        size = int(match.group(2)) // 8
+        nbits = int(match.group(2))
+        if nbits % 8:
+            raise NotImplementedError()
 
-    if size == 1:
-        return Int8 if signed else UInt8
-    elif size == 2:
-        return Int16 if signed else UInt16
-    elif size == 4:
-        return Int32 if signed else UInt32
-    elif size == 8:
-        return Int64 if signed else UInt64
+        signed = not bool(match.group(1))
+        size = nbits // 8
+
+    int_types = [
+        Int8, Int16, Int32, Int64,
+        UInt8, UInt16, UInt32, UInt64,
+    ]
+
+    for int_type in int_types:
+        if (int_type.get_size() == size and
+                int_type.get_signed() == signed):
+            return int_type
 
     raise NotImplementedError()
