@@ -53,14 +53,14 @@ class IntMeta(type):
 
                 elif isinstance(self, np.integer):
                     if self.itemsize == other.itemsize:
-                        data_type = type(other) \
-                            if isinstance(self, np.signedinteger) \
-                            else type(self)
+                        data_type = (type(other)
+                                     if isinstance(self, np.signedinteger)
+                                     else type(self))
 
                     else:
-                        data_type = type(other) \
-                            if self.itemsize < other.itemsize \
-                            else type(self)
+                        data_type = (type(other)
+                                     if self.itemsize < other.itemsize
+                                     else type(self))
 
                 return data_type(f(self, other))
 
