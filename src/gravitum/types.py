@@ -75,7 +75,7 @@ class IntMixin(np.integer):
     @classmethod
     def get_size(cls) -> int:
         """Get size (bytes) of this type."""
-        return cls.itemsize
+        return cls._SIZE
 
     @classmethod
     def get_signed(cls) -> bool:
@@ -106,34 +106,42 @@ class IntMixin(np.integer):
 
 class Int8(np.int8, IntMixin, metaclass=IntMeta):
     """Int8"""
+    _SIZE = 1
 
 
 class Int16(np.int16, IntMixin, metaclass=IntMeta):
     """Int16"""
+    _SIZE = 2
 
 
 class Int32(np.int32, IntMixin, metaclass=IntMeta):
     """Int32"""
+    _SIZE = 4
 
 
 class Int64(np.int64, IntMixin, metaclass=IntMeta):
     """Int64"""
+    _SIZE = 8
 
 
 class UInt8(np.uint8, IntMixin, metaclass=IntMeta):
     """UInt8"""
+    _SIZE = 1
 
 
 class UInt16(np.uint16, IntMixin, metaclass=IntMeta):
     """UInt16"""
+    _SIZE = 2
 
 
 class UInt32(np.uint32, IntMixin, metaclass=IntMeta):
     """UInt32"""
+    _SIZE = 4
 
 
 class UInt64(np.uint64, IntMixin, metaclass=IntMeta):
     """UInt64"""
+    _SIZE = 8
 
 
 IntVar = Union[
