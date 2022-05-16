@@ -167,21 +167,21 @@ def int64(v) -> Int64:
     return Int64(v)
 
 
-def uint8(v) -> Int8:
+def uint8(v) -> UInt8:
     """Short-hand for `UInt8(v)`."""
     return UInt8(v)
 
 
-def uint16(v) -> Int16:
+def uint16(v) -> UInt16:
     """Short-hand for `UInt16(v)`."""
     return UInt16(v)
 
 
-def uint32(v) -> Int32:
+def uint32(v) -> UInt32:
     """Short-hand for `UInt32(v)`."""
     return UInt32(v)
 
 
-def uint64(v) -> Int64:
+def uint64(v) -> UInt64:
     """Short-hand for `UInt64(v)`."""
     return UInt64(v)
