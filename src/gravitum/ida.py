@@ -1,7 +1,7 @@
 """Implement functions which are used in the code decompiled of IDA."""
 
-from .types import (
-    Int8, Int16, Int32, UInt8, UInt16, UInt32, UInt64, IntVar, IntType)
+from .types import (Int8, Int16, Int32, UInt8, UInt16, UInt32, UInt64, IntVar,
+                    IntType)
 from .utils import get_type
 
 BIG_ENDIAN = 'big'
@@ -9,7 +9,6 @@ LITTLE_ENDIAN = 'little'
 
 # Default use little endian.
 BYTE_ORDER = LITTLE_ENDIAN
-
 
 # Refer to defs.h of IDA.
 
@@ -33,7 +32,7 @@ def offset_n(x: IntVar, n: int, t: IntType) -> IntVar:
     """Get the nth member of the data."""
     size = t.get_size()
     data = x.to_bytes(byteorder=BYTE_ORDER)
-    return t.from_bytes(data[n * size: (n + 1) * size], byteorder=BYTE_ORDER)
+    return t.from_bytes(data[n * size:(n + 1) * size], byteorder=BYTE_ORDER)
 
 
 def byte_n(x: IntVar, n: int) -> UInt8:

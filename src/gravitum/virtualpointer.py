@@ -8,13 +8,11 @@ from .utils import get_type
 class VirtualPointer:
     """Provide virtual pointer operation on bytearray."""
 
-    def __init__(
-            self,
-            source: bytearray,
-            data_type: Union[IntType, str],
-            byteorder: str = 'little',
-            offset: int = 0
-    ):
+    def __init__(self,
+                 source: bytearray,
+                 data_type: Union[IntType, str],
+                 byteorder: str = 'little',
+                 offset: int = 0):
         self.source = source
         self.data_type = None
         self.byteorder = byteorder
@@ -32,12 +30,10 @@ class VirtualPointer:
 
     def copy(self) -> "VirtualPointer":
         """Copy this object."""
-        return self.__class__(
-            source=self.source,
-            data_type=self.data_type,
-            byteorder=self.byteorder,
-            offset=self.offset
-        )
+        return self.__class__(source=self.source,
+                              data_type=self.data_type,
+                              byteorder=self.byteorder,
+                              offset=self.offset)
 
     def set_type(self, data_type: Union[IntType, str]) -> NoReturn:
         """Set data type."""
@@ -74,9 +70,7 @@ class VirtualPointer:
         return bytes(self.source[self.offset:self.offset + size])
 
     def write_bytes(
-            self,
-            data: Union[bytes, bytearray, List[SupportsInt]]
-    ) -> NoReturn:
+            self, data: Union[bytes, bytearray, List[SupportsInt]]) -> NoReturn:
         """Write bytes into the source bytearray."""
         try:
             for i, v in enumerate(data):
@@ -95,9 +89,7 @@ class VirtualPointer:
         self.write_bytes(data)
 
 
-def vptr(
-        source: bytearray,
-        data_type: Union[IntType, str] = UInt8
-) -> VirtualPointer:
+def vptr(source: bytearray,
+         data_type: Union[IntType, str] = UInt8) -> VirtualPointer:
     """Short-hand for `VirtualPointer(source, data_type)`."""
     return VirtualPointer(source=source, data_type=data_type)
