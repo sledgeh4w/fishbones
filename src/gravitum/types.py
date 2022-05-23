@@ -14,7 +14,6 @@ __all__ = [
 class IntMeta(type):
     """Meta class of integer type."""
 
-    # Operation methods to be overrode.
     _OVERRIDE_OPERATIONS = [
         '__neg__', '__pos__', '__invert__', '__add__', '__radd__', '__iadd__',
         '__sub__', '__rsub__', '__isub__', '__mul__', '__rmul__', '__imul__',
