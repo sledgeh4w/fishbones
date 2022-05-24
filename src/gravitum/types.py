@@ -57,13 +57,12 @@ class IntMeta(type):
 
                 elif isinstance(self, np.integer):
                     if self.itemsize == other.itemsize:
-                        data_type = (type(other) if isinstance(
-                            self, np.signedinteger) else type(self))
-
+                        value = (other if isinstance(self, np.signedinteger)
+                                 else self)
                     else:
-                        data_type = (type(other)
-                                     if self.itemsize < other.itemsize else
-                                     type(self))
+                        value = other if self.itemsize < other.itemsize else self
+
+                    data_type = type(value)
 
                 return data_type(f(self, other))
 
@@ -100,35 +99,35 @@ class IntBase(np.integer):
                                   signed=self.get_signed())
 
 
-class Int8(IntBase, np.int8, metaclass=IntMeta):
+class Int8(np.int8, IntBase, metaclass=IntMeta):
     """Int8"""
 
 
-class Int16(IntBase, np.int16, metaclass=IntMeta):
+class Int16(np.int16, IntBase, metaclass=IntMeta):
     """Int16"""
 
 
-class Int32(IntBase, np.int32, metaclass=IntMeta):
+class Int32(np.int32, IntBase, metaclass=IntMeta):
     """Int32"""
 
 
-class Int64(IntBase, np.int64, metaclass=IntMeta):
+class Int64(np.int64, IntBase, metaclass=IntMeta):
     """Int64"""
 
 
-class UInt8(IntBase, np.uint8, metaclass=IntMeta):
+class UInt8(np.uint8, IntBase, metaclass=IntMeta):
     """UInt8"""
 
 
-class UInt16(IntBase, np.uint16, metaclass=IntMeta):
+class UInt16(np.uint16, IntBase, metaclass=IntMeta):
     """UInt16"""
 
 
-class UInt32(IntBase, np.uint32, metaclass=IntMeta):
+class UInt32(np.uint32, IntBase, metaclass=IntMeta):
     """UInt32"""
 
 
-class UInt64(IntBase, np.uint64, metaclass=IntMeta):
+class UInt64(np.uint64, IntBase, metaclass=IntMeta):
     """UInt64"""
 
 
