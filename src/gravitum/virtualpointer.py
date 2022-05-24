@@ -97,5 +97,5 @@ class VirtualPointer:
 
 def vptr(source: bytearray,
          data_type: Union[IntType, str] = UInt8) -> VirtualPointer:
-    """Shorthand for `VirtualPointer(source, data_type)`."""
+    """Shorthand of `VirtualPointer(source, data_type)`."""
     return VirtualPointer(source=source, data_type=data_type)

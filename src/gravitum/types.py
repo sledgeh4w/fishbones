@@ -138,40 +138,40 @@ IntType = Type[Union[Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64]]
 
 
 def int8(v) -> Int8:
-    """Shorthand for `Int8(v)`."""
+    """Shorthand of `Int8(v)`."""
     return Int8(v)
 
 
 def int16(v) -> Int16:
-    """Shorthand for `Int16(v)`."""
+    """Shorthand of `Int16(v)`."""
     return Int16(v)
 
 
 def int32(v) -> Int32:
-    """Shorthand for `Int32(v)`."""
+    """Shorthand of `Int32(v)`."""
     return Int32(v)
 
 
 def int64(v) -> Int64:
-    """Shorthand for `Int64(v)`."""
+    """Shorthand of `Int64(v)`."""
     return Int64(v)
 
 
 def uint8(v) -> UInt8:
-    """Shorthand for `UInt8(v)`."""
+    """Shorthand of `UInt8(v)`."""
     return UInt8(v)
 
 
 def uint16(v) -> UInt16:
-    """Shorthand for `UInt16(v)`."""
+    """Shorthand of `UInt16(v)`."""
     return UInt16(v)
 
 
 def uint32(v) -> UInt32:
-    """Shorthand for `UInt32(v)`."""
+    """Shorthand of `UInt32(v)`."""
     return UInt32(v)
 
 
 def uint64(v) -> UInt64:
-    """Shorthand for `UInt64(v)`."""
+    """Shorthand of `UInt64(v)`."""
     return UInt64(v)
