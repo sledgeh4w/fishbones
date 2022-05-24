@@ -35,314 +35,314 @@ def offset_n(x: IntVar, n: int, t: IntType) -> IntVar:
     return t.from_bytes(data[n * size:(n + 1) * size], byteorder=BYTE_ORDER)
 
 
-def byte_n(x: IntVar, n: int) -> UInt8:
+def byten(x: IntVar, n: int) -> UInt8:
     """Implementation of `BYTEn`."""
     return offset_n(x, n, UInt8)
 
 
-def word_n(x: IntVar, n: int) -> UInt16:
+def wordn(x: IntVar, n: int) -> UInt16:
     """Implementation of `WORDn`."""
     return offset_n(x, n, UInt16)
 
 
-def dword_n(x: IntVar, n: int) -> UInt32:
+def dwordn(x: IntVar, n: int) -> UInt32:
     """Implementation of `DWORDn`."""
     return offset_n(x, n, UInt32)
 
 
-def low_byte(x: IntVar) -> UInt8:
+def lobyte(x: IntVar) -> UInt8:
     """Implementation of `LOBYTE`."""
-    return byte_n(x, low_ind(x, UInt8))
+    return byten(x, low_ind(x, UInt8))
 
 
-def low_word(x: IntVar) -> UInt16:
+def loword(x: IntVar) -> UInt16:
     """Implementation of `LOWORD`."""
-    return word_n(x, low_ind(x, UInt16))
+    return wordn(x, low_ind(x, UInt16))
 
 
-def low_dword(x: IntVar) -> UInt32:
+def lodword(x: IntVar) -> UInt32:
     """Implementation of `LODWORD`."""
-    return dword_n(x, low_ind(x, UInt32))
+    return dwordn(x, low_ind(x, UInt32))
 
 
-def high_byte(x: IntVar) -> UInt8:
+def hibyte(x: IntVar) -> UInt8:
     """Implementation of `HIBYTE`."""
-    return byte_n(x, high_ind(x, UInt8))
+    return byten(x, high_ind(x, UInt8))
 
 
-def high_word(x: IntVar) -> UInt16:
+def hiword(x: IntVar) -> UInt16:
     """Implementation of `HIWORD`."""
-    return word_n(x, high_ind(x, UInt16))
+    return wordn(x, high_ind(x, UInt16))
 
 
-def high_dword(x: IntVar) -> UInt32:
+def hidword(x: IntVar) -> UInt32:
     """Implementation of `HIDWORD`."""
-    return dword_n(x, high_ind(x, UInt32))
+    return dwordn(x, high_ind(x, UInt32))
 
 
 def byte1(x: IntVar) -> UInt8:
     """Implementation of `BYTE1`."""
-    return byte_n(x, 1)
+    return byten(x, 1)
 
 
 def byte2(x: IntVar) -> UInt8:
     """Implementation of `BYTE2`."""
-    return byte_n(x, 2)
+    return byten(x, 2)
 
 
 def byte3(x: IntVar) -> UInt8:
     """Implementation of `BYTE3`."""
-    return byte_n(x, 3)
+    return byten(x, 3)
 
 
 def byte4(x: IntVar) -> UInt8:
     """Implementation of `BYTE4`."""
-    return byte_n(x, 4)
+    return byten(x, 4)
 
 
 def byte5(x: IntVar) -> UInt8:
     """Implementation of `BYTE5`."""
-    return byte_n(x, 5)
+    return byten(x, 5)
 
 
 def byte6(x: IntVar) -> UInt8:
     """Implementation of `BYTE6`."""
-    return byte_n(x, 6)
+    return byten(x, 6)
 
 
 def byte7(x: IntVar) -> UInt8:
     """Implementation of `BYTE7`."""
-    return byte_n(x, 7)
+    return byten(x, 7)
 
 
 def byte8(x: IntVar) -> UInt8:
     """Implementation of `BYTE8`."""
-    return byte_n(x, 8)
+    return byten(x, 8)
 
 
 def byte9(x: IntVar) -> UInt8:
     """Implementation of `BYTE9`."""
-    return byte_n(x, 9)
+    return byten(x, 9)
 
 
 def byte10(x: IntVar) -> UInt8:
     """Implementation of `BYTE10`."""
-    return byte_n(x, 10)
+    return byten(x, 10)
 
 
 def byte11(x: IntVar) -> UInt8:
     """Implementation of `BYTE11`."""
-    return byte_n(x, 11)
+    return byten(x, 11)
 
 
 def byte12(x: IntVar) -> UInt8:
     """Implementation of `BYTE12`."""
-    return byte_n(x, 12)
+    return byten(x, 12)
 
 
 def byte13(x: IntVar) -> UInt8:
     """Implementation of `BYTE13`."""
-    return byte_n(x, 13)
+    return byten(x, 13)
 
 
 def byte14(x: IntVar) -> UInt8:
     """Implementation of `BYTE14`."""
-    return byte_n(x, 14)
+    return byten(x, 14)
 
 
 def byte15(x: IntVar) -> UInt8:
     """Implementation of `BYTE15`."""
-    return byte_n(x, 15)
+    return byten(x, 15)
 
 
 def word1(x: IntVar) -> UInt8:
     """Implementation of `WORD1`."""
-    return word_n(x, 1)
+    return wordn(x, 1)
 
 
 def word2(x: IntVar) -> UInt8:
     """Implementation of `WORD2`."""
-    return word_n(x, 2)
+    return wordn(x, 2)
 
 
 def word3(x: IntVar) -> UInt8:
     """Implementation of `WORD3`."""
-    return word_n(x, 3)
+    return wordn(x, 3)
 
 
 def word4(x: IntVar) -> UInt8:
     """Implementation of `WORD4`."""
-    return word_n(x, 4)
+    return wordn(x, 4)
 
 
 def word5(x: IntVar) -> UInt8:
     """Implementation of `WORD5`."""
-    return word_n(x, 5)
+    return wordn(x, 5)
 
 
 def word6(x: IntVar) -> UInt8:
     """Implementation of `WORD6`."""
-    return word_n(x, 6)
+    return wordn(x, 6)
 
 
 def word7(x: IntVar) -> UInt8:
     """Implementation of `WORD7`."""
-    return word_n(x, 7)
+    return wordn(x, 7)
 
 
-def signed_byte_n(x: IntVar, n: int) -> Int8:
+def sbyten(x: IntVar, n: int) -> Int8:
     """Implementation of `SBYTEn`."""
     return offset_n(x, n, Int8)
 
 
-def signed_word_n(x: IntVar, n: int) -> Int16:
+def swordn(x: IntVar, n: int) -> Int16:
     """Implementation of `SWORDn`."""
     return offset_n(x, n, Int16)
 
 
-def signed_dword_n(x: IntVar, n: int) -> Int32:
+def sdwordn(x: IntVar, n: int) -> Int32:
     """Implementation of `SDWORDn`."""
     return offset_n(x, n, Int32)
 
 
-def signed_low_byte(x: IntVar) -> Int8:
+def slobyte(x: IntVar) -> Int8:
     """Implementation of `SLOBYTE`."""
-    return signed_byte_n(x, low_ind(x, Int8))
+    return sbyten(x, low_ind(x, Int8))
 
 
-def signed_low_word(x: IntVar) -> Int16:
+def sloword(x: IntVar) -> Int16:
     """Implementation of `SLOWORD`."""
-    return signed_word_n(x, low_ind(x, Int16))
+    return swordn(x, low_ind(x, Int16))
 
 
-def signed_low_dword(x: IntVar) -> Int32:
+def slodword(x: IntVar) -> Int32:
     """Implementation of `SLODWORD`."""
-    return signed_dword_n(x, low_ind(x, Int32))
+    return sdwordn(x, low_ind(x, Int32))
 
 
-def signed_high_byte(x: IntVar) -> Int8:
+def shibyte(x: IntVar) -> Int8:
     """Implementation of `SHIBYTE`."""
-    return signed_byte_n(x, high_ind(x, Int8))
+    return sbyten(x, high_ind(x, Int8))
 
 
-def signed_high_word(x: IntVar) -> Int16:
+def shiword(x: IntVar) -> Int16:
     """Implementation of `SHIWORD`."""
-    return signed_word_n(x, high_ind(x, Int16))
+    return swordn(x, high_ind(x, Int16))
 
 
-def signed_high_dword(x: IntVar) -> Int32:
+def shidword(x: IntVar) -> Int32:
     """Implementation of `SHIDWORD`."""
-    return signed_dword_n(x, high_ind(x, Int32))
+    return sdwordn(x, high_ind(x, Int32))
 
 
-def signed_byte1(x: IntVar) -> Int8:
+def sbyte1(x: IntVar) -> Int8:
     """Implementation of `SBYTE1`."""
-    return signed_byte_n(x, 1)
+    return sbyten(x, 1)
 
 
-def signed_byte2(x: IntVar) -> Int8:
+def sbyte2(x: IntVar) -> Int8:
     """Implementation of `SBYTE2`."""
-    return signed_byte_n(x, 2)
+    return sbyten(x, 2)
 
 
-def signed_byte3(x: IntVar) -> Int8:
+def sbyte3(x: IntVar) -> Int8:
     """Implementation of `SBYTE3`."""
-    return signed_byte_n(x, 3)
+    return sbyten(x, 3)
 
 
-def signed_byte4(x: IntVar) -> Int8:
+def sbyte4(x: IntVar) -> Int8:
     """Implementation of `SBYTE4`."""
-    return signed_byte_n(x, 4)
+    return sbyten(x, 4)
 
 
-def signed_byte5(x: IntVar) -> Int8:
+def sbyte5(x: IntVar) -> Int8:
     """Implementation of `SBYTE5`."""
-    return signed_byte_n(x, 5)
+    return sbyten(x, 5)
 
 
-def signed_byte6(x: IntVar) -> Int8:
+def sbyte6(x: IntVar) -> Int8:
     """Implementation of `SBYTE6`."""
-    return signed_byte_n(x, 6)
+    return sbyten(x, 6)
 
 
-def signed_byte7(x: IntVar) -> Int8:
+def sbyte7(x: IntVar) -> Int8:
     """Implementation of `SBYTE7`."""
-    return signed_byte_n(x, 7)
+    return sbyten(x, 7)
 
 
-def signed_byte8(x: IntVar) -> Int8:
+def sbyte8(x: IntVar) -> Int8:
     """Implementation of `SBYTE8`."""
-    return signed_byte_n(x, 8)
+    return sbyten(x, 8)
 
 
-def signed_byte9(x: IntVar) -> Int8:
+def sbyte9(x: IntVar) -> Int8:
     """Implementation of `SBYTE9`."""
-    return signed_byte_n(x, 9)
+    return sbyten(x, 9)
 
 
-def signed_byte10(x: IntVar) -> Int8:
+def sbyte10(x: IntVar) -> Int8:
     """Implementation of `SBYTE10`."""
-    return signed_byte_n(x, 10)
+    return sbyten(x, 10)
 
 
-def signed_byte11(x: IntVar) -> Int8:
+def sbyte11(x: IntVar) -> Int8:
     """Implementation of `SBYTE11`."""
-    return signed_byte_n(x, 11)
+    return sbyten(x, 11)
 
 
-def signed_byte12(x: IntVar) -> Int8:
+def sbyte12(x: IntVar) -> Int8:
     """Implementation of `SBYTE12`."""
-    return signed_byte_n(x, 12)
+    return sbyten(x, 12)
 
 
-def signed_byte13(x: IntVar) -> Int8:
+def sbyte13(x: IntVar) -> Int8:
     """Implementation of `SBYTE13`."""
-    return signed_byte_n(x, 13)
+    return sbyten(x, 13)
 
 
-def signed_byte14(x: IntVar) -> Int8:
+def sbyte14(x: IntVar) -> Int8:
     """Implementation of `SBYTE14`."""
-    return signed_byte_n(x, 14)
+    return sbyten(x, 14)
 
 
-def signed_byte15(x: IntVar) -> Int8:
+def sbyte15(x: IntVar) -> Int8:
     """Implementation of `SBYTE15`."""
-    return signed_byte_n(x, 15)
+    return sbyten(x, 15)
 
 
-def signed_word1(x: IntVar) -> Int8:
+def sword1(x: IntVar) -> Int8:
     """Implementation of `SWORD1`."""
-    return signed_word_n(x, 1)
+    return swordn(x, 1)
 
 
-def signed_word2(x: IntVar) -> Int8:
+def sword2(x: IntVar) -> Int8:
     """Implementation of `SWORD2`."""
-    return signed_word_n(x, 2)
+    return swordn(x, 2)
 
 
-def signed_word3(x: IntVar) -> Int8:
+def sword3(x: IntVar) -> Int8:
     """Implementation of `SWORD3`."""
-    return signed_word_n(x, 3)
+    return swordn(x, 3)
 
 
-def signed_word4(x: IntVar) -> Int8:
+def sword4(x: IntVar) -> Int8:
     """Implementation of `SWORD4`."""
-    return signed_word_n(x, 4)
+    return swordn(x, 4)
 
 
-def signed_word5(x: IntVar) -> Int8:
+def sword5(x: IntVar) -> Int8:
     """Implementation of `SWORD5`."""
-    return signed_word_n(x, 5)
+    return swordn(x, 5)
 
 
-def signed_word6(x: IntVar) -> Int8:
+def sword6(x: IntVar) -> Int8:
     """Implementation of `SWORD6`."""
-    return signed_word_n(x, 6)
+    return swordn(x, 6)
 
 
-def signed_word7(x: IntVar) -> Int8:
+def sword7(x: IntVar) -> Int8:
     """Implementation of `SWORD7`."""
-    return signed_word_n(x, 7)
+    return swordn(x, 7)
 
 
 def pair(high: IntVar, low: IntVar) -> IntVar:
