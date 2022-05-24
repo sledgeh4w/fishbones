@@ -433,7 +433,7 @@ def sets(x: IntVar) -> Int8:
     return Int8(data_type(x) < 0)
 
 
-def ofsub(x: IntVar, y: IntVar) -> IntVar:
+def ofsub(x: IntVar, y: IntVar) -> Int8:
     """Implementation of `__OFSUB__`."""
     if x.get_size() < y.get_size():
         x2 = x
@@ -445,7 +445,7 @@ def ofsub(x: IntVar, y: IntVar) -> IntVar:
         return (sx ^ sets(y2)) & (sx ^ sets(x - y2))
 
 
-def ofadd(x: IntVar, y: IntVar) -> IntVar:
+def ofadd(x: IntVar, y: IntVar) -> Int8:
     """Implementation of `__OFADD__`."""
     if x.get_size() < y.get_size():
         x2 = x
