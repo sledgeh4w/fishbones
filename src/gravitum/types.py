@@ -60,7 +60,8 @@ class IntMeta(type):
                         value = (other if isinstance(self, np.signedinteger)
                                  else self)
                     else:
-                        value = other if self.itemsize < other.itemsize else self
+                        value = (other
+                                 if self.itemsize < other.itemsize else self)
 
                     data_type = type(value)
 
