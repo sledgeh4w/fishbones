@@ -19,18 +19,18 @@ Gravitum defines some types (`Int8`, `Int16`, `Int32`, `Int64`, `UInt8`, `UInt16
 ```python
 from gravitum import uint8
 
-v = uint8(1)
+v = uint8(0x53)
 ```
 
 There are usually pointer operations in the decompiled code.
 
 ```c
-unsigned __int8 data[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+unsigned __int8 data[8] = {71, 114, 97, 118, 105, 116, 117, 109};
 
 unsigned __int8 *p = data;
-unsigned __int8 v = p[3];
+unsigned __int8 v = p[4];
 
-*((unsigned __int32 *)(p + 4) + 1) = v;
+*((unsigned __int32 *)p + 1) = v;
 ```
 
 So Gravitum provides function `vptr`.
@@ -38,21 +38,20 @@ So Gravitum provides function `vptr`.
 ```python
 from gravitum import vptr
 
-data = bytearray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+data = bytearray([71, 114, 97, 118, 105, 116, 117, 109])
 
 p = vptr(data, 'uint8')
-v = p.add(3).read()
+v = p.add(4).read()
 
-p.add(4).cast('uint32').add(1).write(v)
+p.cast('uint32').add(1).write(v)
 ```
 
-For IDA, Gravitum implements some functions (`ror*`, `rol*`, `bswap*`, `byte*`, `word*`, `dword*`, `clz`, etc.) that are often used by it. You can import them from `gravitum.ida`.
+For IDA, Gravitum implements some functions (`rol*`, `ror*`, `byte*`, `word*`, `bswap*`, `clz`, etc.) that are often used by it. You can import them from `gravitum.ida`.
 
 ```python
 from gravitum import uint32
 from gravitum.ida import ror4
 
-v = uint32(1)
-v = ror4(v, 8)
+v = uint32(0x53683477)
+v = ror4(v, 2)
 ```
-
