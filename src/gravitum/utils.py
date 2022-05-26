@@ -1,6 +1,8 @@
 import re
 from typing import Optional
 
+import numpy as np
+
 from .types import (Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64,
                     IntType)
 
@@ -28,3 +30,8 @@ def get_type(size: Optional[int] = None,
             return int_type
 
     raise NotImplementedError()
+
+
+def disable_numpy_overflow_warnings():
+    """Disable overflow warnings of numpy."""
+    np.seterr(over='ignore')
