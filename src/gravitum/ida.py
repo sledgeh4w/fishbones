@@ -155,37 +155,37 @@ def byte15(x: IntVar) -> UInt8:
     return byten(x, 15)
 
 
-def word1(x: IntVar) -> UInt8:
+def word1(x: IntVar) -> UInt16:
     """Implementation of `WORD1`."""
     return wordn(x, 1)
 
 
-def word2(x: IntVar) -> UInt8:
+def word2(x: IntVar) -> UInt16:
     """Implementation of `WORD2`."""
     return wordn(x, 2)
 
 
-def word3(x: IntVar) -> UInt8:
+def word3(x: IntVar) -> UInt16:
     """Implementation of `WORD3`."""
     return wordn(x, 3)
 
 
-def word4(x: IntVar) -> UInt8:
+def word4(x: IntVar) -> UInt16:
     """Implementation of `WORD4`."""
     return wordn(x, 4)
 
 
-def word5(x: IntVar) -> UInt8:
+def word5(x: IntVar) -> UInt16:
     """Implementation of `WORD5`."""
     return wordn(x, 5)
 
 
-def word6(x: IntVar) -> UInt8:
+def word6(x: IntVar) -> UInt16:
     """Implementation of `WORD6`."""
     return wordn(x, 6)
 
 
-def word7(x: IntVar) -> UInt8:
+def word7(x: IntVar) -> UInt16:
     """Implementation of `WORD7`."""
     return wordn(x, 7)
 
@@ -310,37 +310,37 @@ def sbyte15(x: IntVar) -> Int8:
     return sbyten(x, 15)
 
 
-def sword1(x: IntVar) -> Int8:
+def sword1(x: IntVar) -> Int16:
     """Implementation of `SWORD1`."""
     return swordn(x, 1)
 
 
-def sword2(x: IntVar) -> Int8:
+def sword2(x: IntVar) -> Int16:
     """Implementation of `SWORD2`."""
     return swordn(x, 2)
 
 
-def sword3(x: IntVar) -> Int8:
+def sword3(x: IntVar) -> Int16:
     """Implementation of `SWORD3`."""
     return swordn(x, 3)
 
 
-def sword4(x: IntVar) -> Int8:
+def sword4(x: IntVar) -> Int16:
     """Implementation of `SWORD4`."""
     return swordn(x, 4)
 
 
-def sword5(x: IntVar) -> Int8:
+def sword5(x: IntVar) -> Int16:
     """Implementation of `SWORD5`."""
     return swordn(x, 5)
 
 
-def sword6(x: IntVar) -> Int8:
+def sword6(x: IntVar) -> Int16:
     """Implementation of `SWORD6`."""
     return swordn(x, 6)
 
 
-def sword7(x: IntVar) -> Int8:
+def sword7(x: IntVar) -> Int16:
     """Implementation of `SWORD7`."""
     return swordn(x, 7)
 
