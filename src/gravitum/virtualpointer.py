@@ -1,4 +1,4 @@
-from typing import List, SupportsInt, Union, NoReturn
+from typing import List, Union
 
 from .exceptions import InvalidOperationError
 from .types import IntBase, IntType, IntVar, UInt8
@@ -75,8 +75,7 @@ class VirtualPointer:
             raise InvalidOperationError('Read out of range')
         return bytes(self.source[self.offset:self.offset + size])
 
-    def write_bytes(
-            self, data: Union[bytes, bytearray, List[SupportsInt]]) -> NoReturn:
+    def write_bytes(self, data: Union[bytes, bytearray, List[int]]):
         """Write bytes into the source bytearray."""
         try:
             for i, v in enumerate(data):
@@ -89,7 +88,7 @@ class VirtualPointer:
         data = self.read_bytes(self.data_type.get_size())
         return self.data_type.from_bytes(data, byteorder=self.byteorder)
 
-    def write(self, value: SupportsInt) -> NoReturn:
+    def write(self, value: int):
         """Write an integer into the source bytearray."""
         data = self.data_type(value).to_bytes(byteorder=self.byteorder)
         self.write_bytes(data)

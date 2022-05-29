@@ -1,14 +1,28 @@
 import re
+import sys
 from functools import wraps
 from typing import Union, Type, SupportsBytes, Iterable
 
 import numpy as np
 
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
 __all__ = [
-    'IntMeta', 'IntBase', 'Int8', 'Int16', 'Int32', 'Int64', 'UInt8', 'UInt16',
-    'UInt32', 'UInt64', 'IntVar', 'IntType', 'int8', 'int16', 'int32', 'int64',
-    'uint8', 'uint16', 'uint32', 'uint64'
+    'IntVar', 'IntType', 'IntMeta', 'IntBase', 'Int8', 'Int16', 'Int32',
+    'Int64', 'UInt8', 'UInt16', 'UInt32', 'UInt64', 'int8', 'int16', 'int32',
+    'int64', 'uint8', 'uint16', 'uint32', 'uint64'
 ]
+
+ByteOrder = Literal['little', 'big']
+
+IntVar = Union['Int8', 'Int16', 'Int32', 'Int64', 'UInt8', 'UInt16', 'UInt32',
+               'UInt64']
+
+IntType = Type[Union['Int8', 'Int16', 'Int32', 'Int64', 'UInt8', 'UInt16',
+                     'UInt32', 'UInt64']]
 
 
 class IntMeta(type):
@@ -28,7 +42,7 @@ class IntMeta(type):
         super().__init__(name, bases, attr_dict)
 
         size = int(re.match(r'(U*)Int(\d+)', cls.__name__).group(2)) // 8
-        setattr(cls, '_SIZE', size)
+        setattr(cls, '_DATA_SIZE', size)
 
         for op in cls._OVERRIDE_OPERATIONS:
             if not hasattr(cls, op):
@@ -75,10 +89,76 @@ class IntMeta(type):
 class IntBase(np.integer):
     """Base class of integer type."""
 
+    def __add__(self, other) -> IntVar:
+        pass
+
+    def __radd__(self, other) -> IntVar:
+        pass
+
+    def __sub__(self, other) -> IntVar:
+        pass
+
+    def __rsub__(self, other) -> IntVar:
+        pass
+
+    def __mul__(self, other) -> IntVar:
+        pass
+
+    def __rmul__(self, other) -> IntVar:
+        pass
+
+    def __truediv__(self, other) -> IntVar:
+        pass
+
+    def __rtruediv__(self, other) -> IntVar:
+        pass
+
+    def __floordiv__(self, other) -> IntVar:
+        pass
+
+    def __rfloordiv__(self, other) -> IntVar:
+        pass
+
+    def __mod__(self, other) -> IntVar:
+        pass
+
+    def __rmod__(self, other) -> IntVar:
+        pass
+
+    def __and__(self, other) -> IntVar:
+        pass
+
+    def __rand__(self, other) -> IntVar:
+        pass
+
+    def __or__(self, other) -> IntVar:
+        pass
+
+    def __ror__(self, other) -> IntVar:
+        pass
+
+    def __xor__(self, other) -> IntVar:
+        pass
+
+    def __rxor__(self, other) -> IntVar:
+        pass
+
+    def __lshift__(self, other) -> IntVar:
+        pass
+
+    def __rlshift__(self, other) -> IntVar:
+        pass
+
+    def __rshift__(self, other) -> IntVar:
+        pass
+
+    def __rrshift__(self, other) -> IntVar:
+        pass
+
     @classmethod
     def get_size(cls) -> int:
         """Get size (bytes) of this type."""
-        return cls._SIZE
+        return cls._DATA_SIZE
 
     @classmethod
     def get_signed(cls) -> bool:
@@ -88,12 +168,12 @@ class IntBase(np.integer):
     @classmethod
     def from_bytes(cls,
                    data: Union[Iterable[int], SupportsBytes],
-                   byteorder: str = 'little'):
+                   byteorder: ByteOrder = 'little'):
         """Return a value of this type from given bytes"""
         return cls(
             int.from_bytes(data, byteorder=byteorder, signed=cls.get_signed()))
 
-    def to_bytes(self, byteorder: str = 'little') -> bytes:
+    def to_bytes(self, byteorder: ByteOrder = 'little') -> bytes:
         """Covert this value to bytes."""
         return int(self).to_bytes(length=self.get_size(),
                                   byteorder=byteorder,
@@ -130,11 +210,6 @@ class UInt32(np.uint32, IntBase, metaclass=IntMeta):
 
 class UInt64(np.uint64, IntBase, metaclass=IntMeta):
     """UInt64"""
-
-
-IntVar = Union[Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64]
-
-IntType = Type[Union[Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64]]
 
 
 def int8(v) -> Int8:

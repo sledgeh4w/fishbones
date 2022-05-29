@@ -1,14 +1,24 @@
 """Implement functions which are used in the code decompiled of IDA."""
 
-from .types import (Int8, Int16, Int32, UInt8, UInt16, UInt32, UInt64, IntVar,
-                    IntType)
+import sys
+from typing import TypeVar
+
+from .types import (IntVar, IntType, Int8, Int16, Int32, Int64, UInt8, UInt16,
+                    UInt32, UInt64)
 from .utils import get_type
 
-BIG_ENDIAN = 'big'
-LITTLE_ENDIAN = 'little'
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
+BIG_ENDIAN: Literal['big'] = 'big'
+LITTLE_ENDIAN: Literal['little'] = 'little'
 
 # Default use little endian.
-BYTE_ORDER = LITTLE_ENDIAN
+BYTE_ORDER: Literal['big', 'little'] = LITTLE_ENDIAN
+
+T = TypeVar('T', Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
 
 # Refer to defs.h of IDA.
 
@@ -419,12 +429,12 @@ def mkcshl(value: IntVar, count: int) -> Int8:
     """Implementation of `__MKCSHL__`."""
     nbits = value.get_size() * 8
     count %= nbits
-    return (value >> (nbits - count)) & 1
+    return Int8((value >> (nbits - count)) & 1)
 
 
 def mkcshr(value: IntVar, count: int) -> Int8:
     """Implementation of `__MKCSHR__`."""
-    return (value >> (count - 1)) & 1
+    return Int8((value >> (count - 1)) & 1)
 
 
 def sets(x: IntVar) -> Int8:
