@@ -88,7 +88,7 @@ class VirtualPointer:
         data = self.read_bytes(self.data_type.get_size())
         return self.data_type.from_bytes(data, byteorder=self.byteorder)
 
-    def write(self, value: int):
+    def write(self, value: Union[IntVar, int]):
         """Write an integer into the source bytearray."""
         data = self.data_type(value).to_bytes(byteorder=self.byteorder)
         self.write_bytes(data)
