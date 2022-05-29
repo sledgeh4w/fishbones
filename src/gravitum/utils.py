@@ -1,10 +1,10 @@
 import re
-from typing import Optional
+from typing import Optional, List, Type
 
 import numpy as np
 
-from .types import (Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64,
-                    IntType)
+from .types import (IntType, IntBase, Int8, Int16, Int32, Int64, UInt8, UInt16,
+                    UInt32, UInt64)
 
 
 def get_type(size: Optional[int] = None,
@@ -23,7 +23,9 @@ def get_type(size: Optional[int] = None,
         signed = not bool(match.group(1))
         size = nbits // 8
 
-    int_types = [Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64]
+    int_types: List[Type[IntBase]] = [
+        Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64
+    ]
 
     for int_type in int_types:
         if int_type.get_size() == size and int_type.get_signed() == signed:
