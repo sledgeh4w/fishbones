@@ -12,13 +12,13 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
+T = TypeVar('T', Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
+
 BIG_ENDIAN: Literal['big'] = 'big'
 LITTLE_ENDIAN: Literal['little'] = 'little'
 
 # Default use little endian.
 BYTE_ORDER: Literal['big', 'little'] = LITTLE_ENDIAN
-
-T = TypeVar('T', Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
 
 # Refer to defs.h of IDA.
 
@@ -363,7 +363,7 @@ def pair(high: IntVar, low: IntVar) -> IntVar:
     return int_type(high) << size * 8 | type(high)(low)
 
 
-def rol(value: IntVar, count: int) -> IntVar:
+def rol(value: T, count: int) -> T:
     """Implementation of `__ROL__`."""
     data_type = type(value)
     nbits = value.get_size() * 8
@@ -484,7 +484,7 @@ def cfadd(x: IntVar, y: IntVar) -> Int8:
 # Refer to https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html.
 
 
-def swap_bytes(value: IntVar) -> IntVar:
+def swap_bytes(value: T) -> T:
     """Reverse bytes of the value with the order."""
     data = value.to_bytes(byteorder=BYTE_ORDER)
     return value.from_bytes(data[::-1], byteorder=BYTE_ORDER)
