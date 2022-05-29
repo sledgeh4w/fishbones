@@ -14,7 +14,7 @@ $ pip install gravitum
 
 ## Usage
 
-Gravitum defines some types (`Int8`, `Int16`, `Int32`, `Int64`, `UInt8`, `UInt16`, `UInt32`, `UInt64`) based on the integer types of [numpy](https://github.com/numpy/numpy). You can use shorthand functions (`int8`, `int16`, `int32`, `int64`, `uint8`, `uint16`, `uint32`, `uint64`) to create them.
+Gravitum defines some interger types based on the types of [numpy](https://github.com/numpy/numpy). You can use shorthand functions (`int8`, `int16`, `int32`, `int64`, `uint8`, `uint16`, `uint32`, `uint64`) to create them.
 
 ```python
 from gravitum import uint8
@@ -22,7 +22,7 @@ from gravitum import uint8
 v = uint8(0x53)
 ```
 
-There are usually pointer operations in the decompiled code.
+Pointer operations are common in the decompiled code.
 
 ```c
 unsigned __int8 data[8] = {71, 114, 97, 118, 105, 116, 117, 109};
@@ -33,7 +33,7 @@ unsigned __int8 v = p[4];
 *((unsigned __int32 *)p + 1) = v;
 ```
 
-So Gravitum provides function `vptr`.
+So Gravitum provides `vptr`.
 
 ```python
 from gravitum import vptr
@@ -46,7 +46,7 @@ v = p.add(4).read()
 p.cast('uint32').add(1).write(v)
 ```
 
-For IDA, Gravitum implements some functions (`rol*`, `ror*`, `byte*`, `word*`, `bswap*`, `clz`, etc.) that are often used by it. You can import them from `gravitum.ida`.
+For IDA, Gravitum implements some functions (`rol*`, `ror*`, `byte*`, `word*`, `bswap*`, `clz`, etc.) that are often used in its output. You can import them from `gravitum.ida`.
 
 ```python
 from gravitum import uint32
