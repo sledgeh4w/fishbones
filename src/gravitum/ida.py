@@ -1,4 +1,4 @@
-"""Implement functions which are used in the code decompiled of IDA."""
+"""Implement functions which are used in the code decompiled by IDA."""
 
 import sys
 from typing import TypeVar
