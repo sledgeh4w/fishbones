@@ -11,9 +11,9 @@ else:
     from typing_extensions import Literal
 
 __all__ = [
-    'IntVar', 'IntType', 'IntMeta', 'IntBase', 'Int8', 'Int16', 'Int32',
-    'Int64', 'UInt8', 'UInt16', 'UInt32', 'UInt64', 'int8', 'int16', 'int32',
-    'int64', 'uint8', 'uint16', 'uint32', 'uint64'
+    'ByteOrder', 'IntVar', 'IntType', 'IntMeta', 'IntBase', 'Int8', 'Int16',
+    'Int32', 'Int64', 'UInt8', 'UInt16', 'UInt32', 'UInt64', 'int8', 'int16',
+    'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64'
 ]
 
 ByteOrder = Literal['little', 'big']
@@ -86,8 +86,8 @@ class IntMeta(type):
         return decorator
 
 
-class IntBase(np.integer):
-    """Base class of integer type."""
+class IntTypeHintMixin:
+    """Add type hints of operation method to integer type."""
 
     def __add__(self, other) -> IntVar:
         pass
@@ -155,6 +155,10 @@ class IntBase(np.integer):
     def __rrshift__(self, other) -> IntVar:
         pass
 
+
+class IntBase(np.integer, IntTypeHintMixin):
+    """Base class of integer type."""
+
     @classmethod
     def get_size(cls) -> int:
         """Get size (bytes) of this type."""
@@ -168,7 +172,7 @@ class IntBase(np.integer):
     @classmethod
     def from_bytes(cls,
                    data: Union[Iterable[int], SupportsBytes],
-                   byteorder: ByteOrder = 'little'):
+                   byteorder: ByteOrder = 'little') -> IntVar:
         """Return a value of this type from given bytes"""
         return cls(
             int.from_bytes(data, byteorder=byteorder, signed=cls.get_signed()))
