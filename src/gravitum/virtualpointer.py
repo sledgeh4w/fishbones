@@ -1,7 +1,7 @@
 from typing import List, Union
 
 from .exceptions import InvalidOperationError
-from .types import IntBase, IntType, IntVar, UInt8
+from .types import ByteOrder, IntBase, IntType, IntVar, UInt8
 from .utils import get_type
 
 
@@ -11,7 +11,7 @@ class VirtualPointer:
     def __init__(self,
                  source: bytearray,
                  data_type: Union[IntType, str],
-                 byteorder: str = 'little',
+                 byteorder: ByteOrder = 'little',
                  offset: int = 0):
         self.source = source
         self.byteorder = byteorder
@@ -94,7 +94,12 @@ class VirtualPointer:
         self.write_bytes(data)
 
 
-def vptr(source: bytearray,
-         data_type: Union[IntType, str] = UInt8) -> VirtualPointer:
+def vptr(
+    source: bytearray,
+    data_type: Union[IntType, str] = UInt8,
+    byteorder: ByteOrder = 'little',
+) -> VirtualPointer:
     """Shorthand of `VirtualPointer(source, data_type)`."""
-    return VirtualPointer(source=source, data_type=data_type)
+    return VirtualPointer(source=source,
+                          data_type=data_type,
+                          byteorder=byteorder)
