@@ -200,6 +200,21 @@ def word7(x: IntVar) -> UInt16:
     return wordn(x, 7)
 
 
+def dword1(x: IntVar) -> UInt32:
+    """Implementation of `DWORD1`."""
+    return dwordn(x, 1)
+
+
+def dword2(x: IntVar) -> UInt32:
+    """Implementation of `DWORD2`."""
+    return dwordn(x, 2)
+
+
+def dword3(x: IntVar) -> UInt32:
+    """Implementation of `DWORD3`."""
+    return dwordn(x, 3)
+
+
 def sbyten(x: IntVar, n: int) -> Int8:
     """Implementation of `SBYTEn`."""
     return offset_n(x, n, Int8)
@@ -353,6 +368,21 @@ def sword6(x: IntVar) -> Int16:
 def sword7(x: IntVar) -> Int16:
     """Implementation of `SWORD7`."""
     return swordn(x, 7)
+
+
+def sdword1(x: IntVar) -> Int32:
+    """Implementation of `SDWORD1`."""
+    return sdwordn(x, 1)
+
+
+def sdword2(x: IntVar) -> Int32:
+    """Implementation of `SDWORD2`."""
+    return sdwordn(x, 2)
+
+
+def sdword3(x: IntVar) -> Int32:
+    """Implementation of `SDWORD3`."""
+    return sdwordn(x, 3)
 
 
 def pair(high: IntVar, low: IntVar) -> IntVar:
