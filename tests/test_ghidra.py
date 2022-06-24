@@ -1,8 +1,8 @@
 import pytest
 
 from gravitum import uint16, uint32, uint64
-from gravitum.ghidra import sub42, zext24, sext48
 from gravitum.utils import disable_numpy_overflow_warnings
+from gravitum.platform.ghidra import sub42, zext24, sext48
 
 disable_numpy_overflow_warnings()
 
