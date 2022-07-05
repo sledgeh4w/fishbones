@@ -51,7 +51,7 @@ v = p.add(4).read()
 p.cast('uint32').add(1).write(v)
 ```
 
-For IDA, Gravitum implements some functions (`rol*`, `ror*`, `byte*`, `word*`, `bswap*`, `clz`, etc.) that are often used in its output. You can import them from `gravitum.platform.ida`.
+For IDA, Gravitum implements some functions (`rol*`, `ror*`, `byte*`, `word*`, `bswap*`, `clz`, etc.) that are often used in its output. You can import them from `gravitum.decompiler.ida`.
 
 ```python
 from gravitum import uint32
