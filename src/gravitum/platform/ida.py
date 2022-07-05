@@ -1,7 +1,7 @@
 """Implement functions which are used in the code decompiled by IDA."""
 
 import sys
-from typing import TypeVar
+from typing import Type, TypeVar
 
 from ..types import (IntVar, IntType, Int8, Int16, Int32, Int64, UInt8, UInt16,
                      UInt32, UInt64)
@@ -38,7 +38,7 @@ def high_ind(x: IntVar, part_type: IntType) -> int:
     return 0 if BYTE_ORDER == BIG_ENDIAN else last_ind(x, part_type)
 
 
-def offset_n(x: IntVar, n: int, t: IntType) -> IntVar:
+def offset_n(x: IntVar, n: int, t: Type[T]) -> T:
     """Get the nth member of the data."""
     size = t.get_size()
     data = x.to_bytes(byteorder=BYTE_ORDER)
@@ -478,11 +478,11 @@ def ofsub(x: IntVar, y: IntVar) -> Int8:
     if x.get_size() < y.get_size():
         x2 = x
         sx = sets(x2)
-        return (sx ^ sets(y)) & (sx ^ sets(x2 - y))
+        return Int8((sx ^ sets(y)) & (sx ^ sets(x2 - y)))
     else:
         y2 = y
         sx = sets(x)
-        return (sx ^ sets(y2)) & (sx ^ sets(x - y2))
+        return Int8((sx ^ sets(y2)) & (sx ^ sets(x - y2)))
 
 
 def ofadd(x: IntVar, y: IntVar) -> Int8:
@@ -490,11 +490,11 @@ def ofadd(x: IntVar, y: IntVar) -> Int8:
     if x.get_size() < y.get_size():
         x2 = x
         sx = sets(x2)
-        return ((1 ^ sx) ^ sets(y)) & (sx ^ sets(x2 + y))
+        return Int8(((1 ^ sx) ^ sets(y)) & (sx ^ sets(x2 + y)))
     else:
         y2 = y
         sx = sets(x)
-        return ((1 ^ sx) ^ sets(y2)) & (sx ^ sets(x + y2))
+        return Int8(((1 ^ sx) ^ sets(y2)) & (sx ^ sets(x + y2)))
 
 
 def cfsub(x: IntVar, y: IntVar) -> Int8:
@@ -535,6 +535,6 @@ def bswap64(value: UInt64) -> UInt64:
     return swap_bytes(value)
 
 
-def clz(x: IntVar) -> int:
+def clz(x: IntVar) -> Int8:
     """Implementation of `__clz`."""
-    return x.get_size() * 8 - len(bin(x)[2:])
+    return Int8(x.get_size() * 8 - len(bin(x)[2:]))
