@@ -1,16 +1,22 @@
 """Implement functions which are used in the code decompiled by Ghidra."""
 
+from typing import Type, TypeVar
+
 from .ida import cfadd, ofsub, ofadd
-from ..types import (IntVar, IntType, Int8, Int16, Int32, Int64, UInt8, UInt16,
-                     UInt32, UInt64)
+from ..types import Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64
 from ..utils import get_type
 
 # Refer to https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra
 # /Features/Decompiler/src/main/help/help/topics/DecompilePlugin
 # /DecompilerConcepts.html
 
+InVar = TypeVar('InVar', Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32,
+                UInt64)
+OutVar = TypeVar('OutVar', Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32,
+                 UInt64)
 
-def truncate(x: IntVar, c: int, to_type: IntType) -> IntVar:
+
+def truncate(x: InVar, c: int, to_type: Type[OutVar]) -> OutVar:
     """Truncation operation."""
     return to_type.from_bytes(x.to_bytes()[c:c + to_type.get_size()])
 
@@ -45,7 +51,8 @@ def sub84(x: UInt64, c: int) -> UInt32:
     return truncate(x, c, UInt32)
 
 
-def zero_extend(x: IntVar, from_type: IntType, to_type: IntType) -> IntVar:
+def zero_extend(x: InVar, from_type: Type[InVar],
+                to_type: Type[OutVar]) -> OutVar:
     """Zero-extension operator."""
     return to_type.from_bytes(from_type(x).to_bytes())
 
@@ -80,7 +87,8 @@ def zext48(x: UInt32) -> UInt64:
     return zero_extend(x, UInt32, UInt64)
 
 
-def sign_extend(x: IntVar, from_type: IntType, to_type: IntType) -> IntVar:
+def sign_extend(x: InVar, from_type: Type[InVar],
+                to_type: Type[OutVar]) -> OutVar:
     """Sign-extension operator."""
     t1 = get_type(size=from_type.get_size(), signed=True)
     t2 = get_type(size=to_type.get_size(), signed=True)

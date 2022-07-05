@@ -41,8 +41,17 @@ class IntMeta(type):
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
 
+        np_base = None
+        for base in bases:
+            if issubclass(base, np.integer):
+                np_base = base
+        if not np_base:
+            raise TypeError('Invalid class')
+
+        setattr(cls, '_np_base', np_base)
+
         size = int(re.match(r'(U*)Int(\d+)', cls.__name__).group(2)) // 8
-        setattr(cls, '_DATA_SIZE', size)
+        setattr(cls, '_data_size', size)
 
         for op in cls._OVERRIDE_OPERATIONS:
             if not hasattr(cls, op):
@@ -62,6 +71,7 @@ class IntMeta(type):
         @wraps(f)
         def decorator(self, *args):
             data_type = type(self)
+            operator = getattr(self._np_base, f.__name__)
 
             if args:
                 other = args[0]
@@ -69,100 +79,41 @@ class IntMeta(type):
                 if isinstance(other, int):
                     other = data_type(other)
 
-                elif isinstance(self, np.integer):
+                elif isinstance(other, np.integer):
                     if self.itemsize == other.itemsize:
-                        value = (other if isinstance(self, np.signedinteger)
-                                 else self)
+                        data_type = type(other if isinstance(
+                            self, np.signedinteger) else self)
                     else:
-                        value = (other
-                                 if self.itemsize < other.itemsize else self)
+                        if self.itemsize < other.itemsize:
+                            data_type = type(other)
+                            operator = getattr(other, f.__name__)
+                            self, other = other, self
 
-                    data_type = type(value)
+                        else:
+                            data_type = type(self)
 
-                return data_type(f(self, other))
+                return data_type(operator(self, other))
 
             return data_type(f(self))
 
         return decorator
 
 
-class IntTypeHintMixin:
-    """Add type hints of operation method to integer type."""
-
-    def __add__(self, other) -> IntVar:
-        pass
-
-    def __radd__(self, other) -> IntVar:
-        pass
-
-    def __sub__(self, other) -> IntVar:
-        pass
-
-    def __rsub__(self, other) -> IntVar:
-        pass
-
-    def __mul__(self, other) -> IntVar:
-        pass
-
-    def __rmul__(self, other) -> IntVar:
-        pass
-
-    def __truediv__(self, other) -> IntVar:
-        pass
-
-    def __rtruediv__(self, other) -> IntVar:
-        pass
-
-    def __floordiv__(self, other) -> IntVar:
-        pass
-
-    def __rfloordiv__(self, other) -> IntVar:
-        pass
-
-    def __mod__(self, other) -> IntVar:
-        pass
-
-    def __rmod__(self, other) -> IntVar:
-        pass
-
-    def __and__(self, other) -> IntVar:
-        pass
-
-    def __rand__(self, other) -> IntVar:
-        pass
-
-    def __or__(self, other) -> IntVar:
-        pass
-
-    def __ror__(self, other) -> IntVar:
-        pass
-
-    def __xor__(self, other) -> IntVar:
-        pass
-
-    def __rxor__(self, other) -> IntVar:
-        pass
-
-    def __lshift__(self, other) -> IntVar:
-        pass
-
-    def __rlshift__(self, other) -> IntVar:
-        pass
-
-    def __rshift__(self, other) -> IntVar:
-        pass
-
-    def __rrshift__(self, other) -> IntVar:
-        pass
-
-
-class IntBase(np.integer, IntTypeHintMixin):
+class IntBase:
     """Base class of integer type."""
+
+    _data_size: int
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def __int__(self) -> int:
+        pass
 
     @classmethod
     def get_size(cls) -> int:
         """Get size (bytes) of this type."""
-        return cls._DATA_SIZE
+        return cls._data_size
 
     @classmethod
     def get_signed(cls) -> bool:
@@ -172,7 +123,7 @@ class IntBase(np.integer, IntTypeHintMixin):
     @classmethod
     def from_bytes(cls,
                    data: Union[Iterable[int], SupportsBytes],
-                   byteorder: ByteOrder = 'little') -> IntVar:
+                   byteorder: ByteOrder = 'little'):
         """Return a value of this type from given bytes"""
         return cls(
             int.from_bytes(data, byteorder=byteorder, signed=cls.get_signed()))
@@ -187,33 +138,585 @@ class IntBase(np.integer, IntTypeHintMixin):
 class Int8(np.int8, IntBase, metaclass=IntMeta):
     """Int8"""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __add__(self, other):
+        pass
+
+    def __radd__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __rsub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __rmul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __rtruediv__(self, other):
+        pass
+
+    def __floordiv__(self, other):
+        pass
+
+    def __rfloordiv__(self, other):
+        pass
+
+    def __mod__(self, other):
+        pass
+
+    def __rmod__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __rand__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __ror__(self, other):
+        pass
+
+    def __xor__(self, other):
+        pass
+
+    def __rxor__(self, other):
+        pass
+
+    def __lshift__(self, other):
+        pass
+
+    def __rlshift__(self, other):
+        pass
+
+    def __rshift__(self, other):
+        pass
+
+    def __rrshift__(self, other):
+        pass
+
 
 class Int16(np.int16, IntBase, metaclass=IntMeta):
     """Int16"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __add__(self, other):
+        pass
+
+    def __radd__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __rsub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __rmul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __rtruediv__(self, other):
+        pass
+
+    def __floordiv__(self, other):
+        pass
+
+    def __rfloordiv__(self, other):
+        pass
+
+    def __mod__(self, other):
+        pass
+
+    def __rmod__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __rand__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __ror__(self, other):
+        pass
+
+    def __xor__(self, other):
+        pass
+
+    def __rxor__(self, other):
+        pass
+
+    def __lshift__(self, other):
+        pass
+
+    def __rlshift__(self, other):
+        pass
+
+    def __rshift__(self, other):
+        pass
+
+    def __rrshift__(self, other):
+        pass
 
 
 class Int32(np.int32, IntBase, metaclass=IntMeta):
     """Int32"""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __add__(self, other):
+        pass
+
+    def __radd__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __rsub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __rmul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __rtruediv__(self, other):
+        pass
+
+    def __floordiv__(self, other):
+        pass
+
+    def __rfloordiv__(self, other):
+        pass
+
+    def __mod__(self, other):
+        pass
+
+    def __rmod__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __rand__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __ror__(self, other):
+        pass
+
+    def __xor__(self, other):
+        pass
+
+    def __rxor__(self, other):
+        pass
+
+    def __lshift__(self, other):
+        pass
+
+    def __rlshift__(self, other):
+        pass
+
+    def __rshift__(self, other):
+        pass
+
+    def __rrshift__(self, other):
+        pass
+
 
 class Int64(np.int64, IntBase, metaclass=IntMeta):
     """Int64"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __add__(self, other):
+        pass
+
+    def __radd__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __rsub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __rmul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __rtruediv__(self, other):
+        pass
+
+    def __floordiv__(self, other):
+        pass
+
+    def __rfloordiv__(self, other):
+        pass
+
+    def __mod__(self, other):
+        pass
+
+    def __rmod__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __rand__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __ror__(self, other):
+        pass
+
+    def __xor__(self, other):
+        pass
+
+    def __rxor__(self, other):
+        pass
+
+    def __lshift__(self, other):
+        pass
+
+    def __rlshift__(self, other):
+        pass
+
+    def __rshift__(self, other):
+        pass
+
+    def __rrshift__(self, other):
+        pass
 
 
 class UInt8(np.uint8, IntBase, metaclass=IntMeta):
     """UInt8"""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __add__(self, other):
+        pass
+
+    def __radd__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __rsub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __rmul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __rtruediv__(self, other):
+        pass
+
+    def __floordiv__(self, other):
+        pass
+
+    def __rfloordiv__(self, other):
+        pass
+
+    def __mod__(self, other):
+        pass
+
+    def __rmod__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __rand__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __ror__(self, other):
+        pass
+
+    def __xor__(self, other):
+        pass
+
+    def __rxor__(self, other):
+        pass
+
+    def __lshift__(self, other):
+        pass
+
+    def __rlshift__(self, other):
+        pass
+
+    def __rshift__(self, other):
+        pass
+
+    def __rrshift__(self, other):
+        pass
+
 
 class UInt16(np.uint16, IntBase, metaclass=IntMeta):
     """UInt16"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __add__(self, other):
+        pass
+
+    def __radd__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __rsub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __rmul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __rtruediv__(self, other):
+        pass
+
+    def __floordiv__(self, other):
+        pass
+
+    def __rfloordiv__(self, other):
+        pass
+
+    def __mod__(self, other):
+        pass
+
+    def __rmod__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __rand__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __ror__(self, other):
+        pass
+
+    def __xor__(self, other):
+        pass
+
+    def __rxor__(self, other):
+        pass
+
+    def __lshift__(self, other):
+        pass
+
+    def __rlshift__(self, other):
+        pass
+
+    def __rshift__(self, other):
+        pass
+
+    def __rrshift__(self, other):
+        pass
 
 
 class UInt32(np.uint32, IntBase, metaclass=IntMeta):
     """UInt32"""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __add__(self, other):
+        pass
+
+    def __radd__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __rsub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __rmul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __rtruediv__(self, other):
+        pass
+
+    def __floordiv__(self, other):
+        pass
+
+    def __rfloordiv__(self, other):
+        pass
+
+    def __mod__(self, other):
+        pass
+
+    def __rmod__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __rand__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __ror__(self, other):
+        pass
+
+    def __xor__(self, other):
+        pass
+
+    def __rxor__(self, other):
+        pass
+
+    def __lshift__(self, other):
+        pass
+
+    def __rlshift__(self, other):
+        pass
+
+    def __rshift__(self, other):
+        pass
+
+    def __rrshift__(self, other):
+        pass
+
 
 class UInt64(np.uint64, IntBase, metaclass=IntMeta):
     """UInt64"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __add__(self, other):
+        pass
+
+    def __radd__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __rsub__(self, other):
+        pass
+
+    def __mul__(self, other):
+        pass
+
+    def __rmul__(self, other):
+        pass
+
+    def __truediv__(self, other):
+        pass
+
+    def __rtruediv__(self, other):
+        pass
+
+    def __floordiv__(self, other):
+        pass
+
+    def __rfloordiv__(self, other):
+        pass
+
+    def __mod__(self, other):
+        pass
+
+    def __rmod__(self, other):
+        pass
+
+    def __and__(self, other):
+        pass
+
+    def __rand__(self, other):
+        pass
+
+    def __or__(self, other):
+        pass
+
+    def __ror__(self, other):
+        pass
+
+    def __xor__(self, other):
+        pass
+
+    def __rxor__(self, other):
+        pass
+
+    def __lshift__(self, other):
+        pass
+
+    def __rlshift__(self, other):
+        pass
+
+    def __rshift__(self, other):
+        pass
+
+    def __rrshift__(self, other):
+        pass
 
 
 def int8(v) -> Int8:
