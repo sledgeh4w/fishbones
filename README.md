@@ -55,7 +55,7 @@ For IDA, Gravitum implements some functions (`rol*`, `ror*`, `byte*`, `word*`, `
 
 ```python
 from gravitum import uint32
-from gravitum.platform.ida import ror4
+from gravitum.decompiler.ida import ror4
 
 v = uint32(0x53683477)
 v = ror4(v, 2)
