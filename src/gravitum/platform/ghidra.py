@@ -1,9 +1,9 @@
 """Implement functions which are used in the code decompiled by Ghidra."""
 
 from .ida import cfadd, ofsub, ofadd
-from .types import (IntVar, IntType, Int8, Int16, Int32, Int64, UInt8, UInt16,
-                    UInt32, UInt64)
-from .utils import get_type
+from ..types import (IntVar, IntType, Int8, Int16, Int32, Int64, UInt8, UInt16,
+                     UInt32, UInt64)
+from ..utils import get_type
 
 # Refer to https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra
 # /Features/Decompiler/src/main/help/help/topics/DecompilePlugin
