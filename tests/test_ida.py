@@ -1,11 +1,8 @@
 import pytest
 
 from gravitum import uint32, Int8, UInt8
-from gravitum.utils import disable_numpy_overflow_warnings
 from gravitum.decompiler.ida import (offset_n, rol4, ror4, ofsub, ofadd, cfsub,
                                      cfadd, bswap32, clz)
-
-disable_numpy_overflow_warnings()
 
 
 @pytest.mark.parametrize('x,n,t,expected', [
