@@ -19,7 +19,7 @@ $ pip install gravitum
 
 ## Usage
 
-Gravitum defines some interger types based on the types of [numpy](https://github.com/numpy/numpy). You can use shorthand functions (`int8`, `int16`, `int32`, `int64`, `uint8`, `uint16`, `uint32`, `uint64`) to create them.
+Gravitum defines some interger types with fixed size. You can use shorthand functions (`int8`, `int16`, `int32`, `int64`, `uint8`, `uint16`, `uint32`, `uint64`) to create them.
 
 ```python
 from gravitum import uint8
