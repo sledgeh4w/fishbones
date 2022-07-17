@@ -393,7 +393,7 @@ def pair(high: IntVar, low: IntVar) -> IntVar:
     return int_type(high) << size * 8 | type(high)(low)
 
 
-def rol(value: T, count: int) -> T:
+def rol(value: IntVar, count: int) -> IntVar:
     """Implementation of `__ROL__`."""
     data_type = type(value)
     nbits = value.get_size() * 8
@@ -417,42 +417,42 @@ def rol(value: T, count: int) -> T:
 
 def rol1(value: UInt8, count: int) -> UInt8:
     """Implementation of `__ROL1__`."""
-    return rol(value, count)
+    return UInt8(rol(value, count))
 
 
 def rol2(value: UInt16, count: int) -> UInt16:
     """Implementation of `__ROL2__`."""
-    return rol(value, count)
+    return UInt16(rol(value, count))
 
 
 def rol4(value: UInt32, count: int) -> UInt32:
     """Implementation of `__ROL4__`."""
-    return rol(value, count)
+    return UInt32(rol(value, count))
 
 
 def rol8(value: UInt64, count: int) -> UInt64:
     """Implementation of `__ROL8__`."""
-    return rol(value, count)
+    return UInt64(rol(value, count))
 
 
 def ror1(value: UInt8, count: int) -> UInt8:
     """Implementation of `__ROR1__`."""
-    return rol(value, -count)
+    return UInt8(rol(value, -count))
 
 
 def ror2(value: UInt16, count: int) -> UInt16:
     """Implementation of `__ROR2__`."""
-    return rol(value, -count)
+    return UInt16(rol(value, -count))
 
 
 def ror4(value: UInt32, count: int) -> UInt32:
     """Implementation of `__ROR4__`."""
-    return rol(value, -count)
+    return UInt32(rol(value, -count))
 
 
 def ror8(value: UInt64, count: int) -> UInt64:
     """Implementation of `__ROR8__`."""
-    return rol(value, -count)
+    return UInt64(rol(value, -count))
 
 
 def mkcshl(value: IntVar, count: int) -> Int8:
@@ -537,4 +537,4 @@ def bswap64(value: UInt64) -> UInt64:
 
 def clz(x: IntVar) -> Int8:
     """Implementation of `__clz`."""
-    return Int8(x.get_size() * 8 - len(bin(x)[2:]))
+    return Int8(x.get_size() * 8 - len(bin(int(x))[2:]))
