@@ -14,6 +14,7 @@ from typing import (
     ClassVar,
     Iterable,
     SupportsBytes,
+    SupportsInt,
     Type,
     TypeVar,
     Union,
@@ -86,7 +87,7 @@ class _IntOp:
     def __call__(self, other: Any) -> IntVar: ...
 
 class _ComparisonOp:
-    def __call__(self, other) -> bool: ...
+    def __call__(self, other: SupportsInt) -> bool: ...
 
 class IntMeta(type): ...
 
