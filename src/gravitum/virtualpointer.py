@@ -8,16 +8,18 @@ from .utils import get_type
 class VirtualPointer:
     """Provide virtual pointer operation on bytearray."""
 
-    def __init__(self,
-                 source: bytearray,
-                 data_type: Union[IntType, str],
-                 byteorder: ByteOrder = 'little',
-                 offset: int = 0):
+    def __init__(
+        self,
+        source: bytearray,
+        data_type: Union[IntType, str],
+        byteorder: ByteOrder = "little",
+        offset: int = 0,
+    ):
+        self._data_type = None
+
         self.source = source
         self.byteorder = byteorder
         self.offset = offset
-
-        self._data_type = None
         self.data_type = data_type
 
     def __add__(self, other):
@@ -34,24 +36,26 @@ class VirtualPointer:
         return self._data_type
 
     @data_type.setter
-    def data_type(self, value: Union[IntType, str]):
+    def data_type(self, type_or_name: Union[IntType, str]):
         """Set data type."""
-        if isinstance(value, str):
+        if isinstance(type_or_name, str):
             try:
-                self._data_type = get_type(type_name=value)
+                self._data_type = get_type(type_name=type_or_name)
             except NotImplementedError as e:
-                raise InvalidOperationError('Unsupported type') from e
-        elif issubclass(value, IntBase):
-            self._data_type = value
+                raise InvalidOperationError("Unsupported type") from e
+        elif issubclass(type_or_name, IntBase):
+            self._data_type = type_or_name
         else:
             raise TypeError()
 
     def copy(self) -> "VirtualPointer":
         """Copy this object."""
-        return self.__class__(source=self.source,
-                              data_type=self.data_type,
-                              byteorder=self.byteorder,
-                              offset=self.offset)
+        return self.__class__(
+            source=self.source,
+            data_type=self.data_type,
+            byteorder=self.byteorder,
+            offset=self.offset,
+        )
 
     def add(self, num: int) -> "VirtualPointer":
         """Offset this pointer position."""
@@ -72,8 +76,8 @@ class VirtualPointer:
     def read_bytes(self, size: int) -> bytes:
         """Read bytes from the source bytearray."""
         if self.offset + size > len(self.source):
-            raise InvalidOperationError('Read out of range')
-        return bytes(self.source[self.offset:self.offset + size])
+            raise InvalidOperationError("Read out of range")
+        return bytes(self.source[self.offset : self.offset + size])
 
     def write_bytes(self, data: Union[bytes, bytearray, List[int]]):
         """Write bytes into the source bytearray."""
@@ -81,7 +85,7 @@ class VirtualPointer:
             for i, v in enumerate(data):
                 self.source[self.offset + i] = v
         except IndexError as e:
-            raise InvalidOperationError('Write out of range') from e
+            raise InvalidOperationError("Write out of range") from e
 
     def read(self) -> IntVar:
         """Read an integer from the source bytearray."""
@@ -97,9 +101,7 @@ class VirtualPointer:
 def vptr(
     source: bytearray,
     data_type: Union[IntType, str] = UInt8,
-    byteorder: ByteOrder = 'little',
+    byteorder: ByteOrder = "little",
 ) -> VirtualPointer:
     """Shorthand of `VirtualPointer(source, data_type)`."""
-    return VirtualPointer(source=source,
-                          data_type=data_type,
-                          byteorder=byteorder)
+    return VirtualPointer(source=source, data_type=data_type, byteorder=byteorder)
