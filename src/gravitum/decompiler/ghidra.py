@@ -10,15 +10,13 @@ from ..utils import get_type
 # /Features/Decompiler/src/main/help/help/topics/DecompilePlugin
 # /DecompilerConcepts.html
 
-InVar = TypeVar('InVar', Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32,
-                UInt64)
-OutVar = TypeVar('OutVar', Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32,
-                 UInt64)
+_T1 = TypeVar("_T1", Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
+_T2 = TypeVar("_T2", Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
 
 
-def truncate(x: InVar, c: int, to_type: Type[OutVar]) -> OutVar:
+def truncate(x: _T1, c: int, to_type: Type[_T2]) -> _T2:
     """Truncation operation."""
-    return to_type.from_bytes(x.to_bytes()[c:c + to_type.get_size()])
+    return to_type.from_bytes(x.to_bytes()[c : c + to_type.get_size()])
 
 
 def sub21(x: UInt16, c: int) -> UInt8:
@@ -51,8 +49,7 @@ def sub84(x: UInt64, c: int) -> UInt32:
     return truncate(x, c, UInt32)
 
 
-def zero_extend(x: InVar, from_type: Type[InVar],
-                to_type: Type[OutVar]) -> OutVar:
+def zero_extend(x: _T1, from_type: Type[_T1], to_type: Type[_T2]) -> _T2:
     """Zero-extension operator."""
     return to_type.from_bytes(from_type(x).to_bytes())
 
@@ -87,8 +84,7 @@ def zext48(x: UInt32) -> UInt64:
     return zero_extend(x, UInt32, UInt64)
 
 
-def sign_extend(x: InVar, from_type: Type[InVar],
-                to_type: Type[OutVar]) -> OutVar:
+def sign_extend(x: _T1, from_type: Type[_T1], to_type: Type[_T2]) -> _T2:
     """Sign-extension operator."""
     t1 = get_type(size=from_type.get_size(), signed=True)
     t2 = get_type(size=to_type.get_size(), signed=True)

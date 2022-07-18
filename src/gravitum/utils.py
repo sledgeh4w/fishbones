@@ -1,16 +1,27 @@
 import re
 from typing import Optional, List
 
-from .types import (IntType, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32,
-                    UInt64)
+from .types import (
+    IntType,
+    Int8,
+    Int16,
+    Int32,
+    Int64,
+    UInt8,
+    UInt16,
+    UInt32,
+    UInt64,
+)
 
 
-def get_type(size: Optional[int] = None,
-             signed: Optional[bool] = None,
-             type_name: Optional[str] = None) -> IntType:
+def get_type(
+    size: Optional[int] = None,
+    signed: Optional[bool] = None,
+    type_name: Optional[str] = None,
+) -> IntType:
     """Get type int with specified size and signed."""
     if type_name is not None:
-        match = re.match(r'(u*)int(\d+)', type_name)
+        match = re.match(r"(u*)int(\d+)", type_name)
         if not match:
             raise NotImplementedError()
 
@@ -22,7 +33,14 @@ def get_type(size: Optional[int] = None,
         size = nbits // 8
 
     int_types: List[IntType] = [
-        Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64
+        Int8,
+        Int16,
+        Int32,
+        Int64,
+        UInt8,
+        UInt16,
+        UInt32,
+        UInt64,
     ]
 
     for int_type in int_types:

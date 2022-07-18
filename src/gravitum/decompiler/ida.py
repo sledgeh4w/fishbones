@@ -3,8 +3,18 @@
 import sys
 from typing import Type, TypeVar
 
-from ..types import (IntVar, IntType, Int8, Int16, Int32, Int64, UInt8, UInt16,
-                     UInt32, UInt64)
+from ..types import (
+    IntVar,
+    IntType,
+    Int8,
+    Int16,
+    Int32,
+    Int64,
+    UInt8,
+    UInt16,
+    UInt32,
+    UInt64,
+)
 from ..utils import get_type
 
 if sys.version_info >= (3, 8):
@@ -12,13 +22,13 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-T = TypeVar('T', Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
+_T = TypeVar("_T", Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
 
-BIG_ENDIAN: Literal['big'] = 'big'
-LITTLE_ENDIAN: Literal['little'] = 'little'
+BIG_ENDIAN: Literal["big"] = "big"
+LITTLE_ENDIAN: Literal["little"] = "little"
 
 # Default use little endian.
-BYTE_ORDER: Literal['big', 'little'] = LITTLE_ENDIAN
+BYTE_ORDER: Literal["big", "little"] = LITTLE_ENDIAN
 
 # Refer to defs.h of IDA.
 
@@ -38,11 +48,11 @@ def high_ind(x: IntVar, part_type: IntType) -> int:
     return 0 if BYTE_ORDER == BIG_ENDIAN else last_ind(x, part_type)
 
 
-def offset_n(x: IntVar, n: int, t: Type[T]) -> T:
+def offset_n(x: IntVar, n: int, t: Type[_T]) -> _T:
     """Get the nth member of the data."""
     size = t.get_size()
     data = x.to_bytes(byteorder=BYTE_ORDER)
-    return t.from_bytes(data[n * size:(n + 1) * size], byteorder=BYTE_ORDER)
+    return t.from_bytes(data[n * size : (n + 1) * size], byteorder=BYTE_ORDER)
 
 
 def byten(x: IntVar, n: int) -> UInt8:
@@ -514,7 +524,7 @@ def cfadd(x: IntVar, y: IntVar) -> Int8:
 # Refer to https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html.
 
 
-def swap_bytes(value: T) -> T:
+def swap_bytes(value: _T) -> _T:
     """Reverse bytes of the value with the order."""
     data = value.to_bytes(byteorder=BYTE_ORDER)
     return value.from_bytes(data[::-1], byteorder=BYTE_ORDER)

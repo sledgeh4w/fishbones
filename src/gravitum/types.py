@@ -8,48 +8,93 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-ByteOrder = Literal['little', 'big']
+ByteOrder = Literal["little", "big"]
 
-IntVar = Union['Int8', 'Int16', 'Int32', 'Int64', 'UInt8', 'UInt16', 'UInt32',
-               'UInt64']
+IntVar = Union["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"]
 
-IntType = Type[Union['Int8', 'Int16', 'Int32', 'Int64', 'UInt8', 'UInt16',
-                     'UInt32', 'UInt64']]
+IntType = Type[
+    Union[
+        "Int8",
+        "Int16",
+        "Int32",
+        "Int64",
+        "UInt8",
+        "UInt16",
+        "UInt32",
+        "UInt64",
+    ]
+]
 
 
 class IntMeta(type):
     """Meta class of integer type."""
 
     _SUPPORT_OPERATIONS = [
-        '__neg__', '__pos__', '__abs__', '__add__', '__radd__', '__iadd__',
-        '__sub__', '__rsub__', '__isub__', '__mul__', '__rmul__', '__imul__',
-        '__truediv__', '__rtruediv__', '__itruediv__', '__floordiv__',
-        '__rfloordiv__', '__ifloordiv__', '__mod__', '__rmod__', '__imod__',
-        '__invert__', '__and__', '__rand__', '__iand__', '__or__', '__ror__',
-        '__ior__', '__xor__', '__rxor__', '__ixor__', '__lshift__',
-        '__rlshift__', '__ilshift__', '__rshift__', '__rrshift__', '__irshift__'
+        "__neg__",
+        "__pos__",
+        "__abs__",
+        "__add__",
+        "__radd__",
+        "__iadd__",
+        "__sub__",
+        "__rsub__",
+        "__isub__",
+        "__mul__",
+        "__rmul__",
+        "__imul__",
+        "__truediv__",
+        "__rtruediv__",
+        "__itruediv__",
+        "__floordiv__",
+        "__rfloordiv__",
+        "__ifloordiv__",
+        "__mod__",
+        "__rmod__",
+        "__imod__",
+        "__invert__",
+        "__and__",
+        "__rand__",
+        "__iand__",
+        "__or__",
+        "__ror__",
+        "__ior__",
+        "__xor__",
+        "__rxor__",
+        "__ixor__",
+        "__lshift__",
+        "__rlshift__",
+        "__ilshift__",
+        "__rshift__",
+        "__rrshift__",
+        "__irshift__",
     ]
 
-    _SUPPORT_COMPARE = [
-        '__gt__', '__ge__', '__eq__', '__le__', '__lt__', '__ne__'
+    _SUPPORT_COMPARISONS = [
+        "__gt__",
+        "__ge__",
+        "__eq__",
+        "__le__",
+        "__lt__",
+        "__ne__",
     ]
 
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
 
-        base = getattr(ctypes, 'c_%s' % cls.__name__.lower())
-        size = int(re.match(r'(U*)Int(\d+)', cls.__name__).group(2)) // 8
-        signed = bool(re.match(r'Int\d+', cls.__name__))
+        base = getattr(ctypes, "c_%s" % cls.__name__.lower())
+        setattr(cls, "_base", base)
 
-        setattr(cls, '_base', base)
-        setattr(cls, '_size', size)
-        setattr(cls, '_signed', signed)
+        size = int(re.match(r"(U*)Int(\d+)", cls.__name__).group(2)) // 8
+        setattr(cls, "_size", size)
+
+        signed = bool(re.match(r"Int\d+", cls.__name__))
+        setattr(cls, "_signed", signed)
 
         for func in cls._SUPPORT_OPERATIONS:
             setattr(cls, func, cls.build_operation(func))
 
-        for func in cls._SUPPORT_COMPARE:
-            setattr(cls, func, cls.build_compare(func))
+        for func in cls._SUPPORT_COMPARISONS:
+            setattr(cls, func, cls.build_comparison(func))
 
     @staticmethod
     def build_operation(func):
@@ -91,8 +136,8 @@ class IntMeta(type):
         return decorator
 
     @staticmethod
-    def build_compare(func):
-        """Build compare method."""
+    def build_comparison(func):
+        """Build comparison method."""
 
         def decorator(self, other):
             cmp = getattr(int, func)
@@ -106,7 +151,7 @@ class IntBase:
 
     def __init__(self, val):
         if isinstance(val, IntBase):
-            val = int(val)
+            val = val.__int__()
 
         self._impl = self._base(val)
 
@@ -124,18 +169,21 @@ class IntBase:
         return cls._signed
 
     @classmethod
-    def from_bytes(cls,
-                   data: Union[Iterable[int], SupportsBytes],
-                   byteorder: ByteOrder = 'little'):
+    def from_bytes(
+        cls,
+        data: Union[Iterable[int], SupportsBytes],
+        byteorder: ByteOrder = "little",
+    ):
         """Return a value of this type from given bytes"""
-        return cls(
-            int.from_bytes(data, byteorder=byteorder, signed=cls.get_signed()))
+        return cls(int.from_bytes(data, byteorder=byteorder, signed=cls.get_signed()))
 
-    def to_bytes(self, byteorder: ByteOrder = 'little') -> bytes:
+    def to_bytes(self, byteorder: ByteOrder = "little") -> bytes:
         """Covert this value to bytes."""
-        return int(self).to_bytes(length=self.get_size(),
-                                  byteorder=byteorder,
-                                  signed=self.get_signed())
+        return int(self).to_bytes(
+            length=self.get_size(),
+            byteorder=byteorder,
+            signed=self.get_signed(),
+        )
 
 
 class Int8(IntBase, metaclass=IntMeta):
