@@ -41,10 +41,13 @@ class VirtualPointer:
         if isinstance(type_or_name, str):
             try:
                 self._data_type = get_type(type_name=type_or_name)
-            except NotImplementedError as e:
+
+            except ValueError as e:
                 raise InvalidOperationError("Unsupported type") from e
+
         elif issubclass(type_or_name, IntBase):
             self._data_type = type_or_name
+
         else:
             raise TypeError()
 
@@ -77,6 +80,7 @@ class VirtualPointer:
         """Read bytes from the source bytearray."""
         if self.offset + size > len(self.source):
             raise InvalidOperationError("Read out of range")
+
         return bytes(self.source[self.offset : self.offset + size])
 
     def write_bytes(self, data: Union[bytes, bytearray, List[int]]):
@@ -84,6 +88,7 @@ class VirtualPointer:
         try:
             for i, v in enumerate(data):
                 self.source[self.offset + i] = v
+
         except IndexError as e:
             raise InvalidOperationError("Write out of range") from e
 

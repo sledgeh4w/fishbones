@@ -23,11 +23,11 @@ def get_type(
     if type_name is not None:
         match = re.match(r"(u*)int(\d+)", type_name)
         if not match:
-            raise NotImplementedError()
+            raise ValueError("Match type failed")
 
         nbits = int(match.group(2))
         if nbits % 8:
-            raise NotImplementedError()
+            raise ValueError("Match type failed")
 
         signed = not bool(match.group(1))
         size = nbits // 8
@@ -47,4 +47,4 @@ def get_type(
         if int_type.get_size() == size and int_type.get_signed() == signed:
             return int_type
 
-    raise NotImplementedError()
+    raise ValueError("Match type failed")

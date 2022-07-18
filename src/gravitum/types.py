@@ -1,7 +1,7 @@
 import ctypes
 import re
 import sys
-from typing import Iterable, SupportsBytes, Type, Union
+from typing import Iterable, SupportsBytes, SupportsInt, Type, Union
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -11,19 +11,7 @@ else:
 ByteOrder = Literal["little", "big"]
 
 IntVar = Union["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"]
-
-IntType = Type[
-    Union[
-        "Int8",
-        "Int16",
-        "Int32",
-        "Int64",
-        "UInt8",
-        "UInt16",
-        "UInt32",
-        "UInt64",
-    ]
-]
+IntType = Type[IntVar]
 
 
 class IntMeta(type):
@@ -117,7 +105,7 @@ class IntMeta(type):
             if args:
                 other = args[0]
 
-                if not isinstance(other, int):
+                if isinstance(other, IntBase):
                     if self.get_size() == other.get_size():
                         data_type = type(other if self.get_signed() else self)
 
@@ -128,6 +116,9 @@ class IntMeta(type):
 
                         else:
                             data_type = type(self)
+
+                elif not hasattr(other, "__int__"):
+                    return NotImplemented
 
                 return data_type(operator(self._impl.value, int(other)))
 
@@ -141,7 +132,7 @@ class IntMeta(type):
 
         def decorator(self, other):
             cmp = getattr(int, func)
-            return cmp(int(self), int(other))
+            return cmp(self._impl.value, int(other))
 
         return decorator
 
@@ -149,11 +140,8 @@ class IntMeta(type):
 class IntBase:
     """Base class of integer type."""
 
-    def __init__(self, val):
-        if isinstance(val, IntBase):
-            val = val.__int__()
-
-        self._impl = self._base(val)
+    def __init__(self, val: SupportsInt):
+        self._impl = self._base(int(val))
 
     def __int__(self) -> int:
         return int(self._impl.value)
@@ -218,41 +206,41 @@ class UInt64(IntBase, metaclass=IntMeta):
     """UInt64"""
 
 
-def int8(v) -> Int8:
+def int8(v: SupportsInt) -> Int8:
     """Shorthand of `Int8(v)`."""
     return Int8(v)
 
 
-def int16(v) -> Int16:
+def int16(v: SupportsInt) -> Int16:
     """Shorthand of `Int16(v)`."""
     return Int16(v)
 
 
-def int32(v) -> Int32:
+def int32(v: SupportsInt) -> Int32:
     """Shorthand of `Int32(v)`."""
     return Int32(v)
 
 
-def int64(v) -> Int64:
+def int64(v: SupportsInt) -> Int64:
     """Shorthand of `Int64(v)`."""
     return Int64(v)
 
 
-def uint8(v) -> UInt8:
+def uint8(v: SupportsInt) -> UInt8:
     """Shorthand of `UInt8(v)`."""
     return UInt8(v)
 
 
-def uint16(v) -> UInt16:
+def uint16(v: SupportsInt) -> UInt16:
     """Shorthand of `UInt16(v)`."""
     return UInt16(v)
 
 
-def uint32(v) -> UInt32:
+def uint32(v: SupportsInt) -> UInt32:
     """Shorthand of `UInt32(v)`."""
     return UInt32(v)
 
 
-def uint64(v) -> UInt64:
+def uint64(v: SupportsInt) -> UInt64:
     """Shorthand of `UInt64(v)`."""
     return UInt64(v)
