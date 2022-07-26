@@ -1,17 +1,83 @@
 import ctypes
 import re
 import sys
-from typing import Iterable, SupportsBytes, SupportsInt, Type, Union
+from ctypes import (
+    c_int8,
+    c_int16,
+    c_int32,
+    c_int64,
+    c_uint8,
+    c_uint16,
+    c_uint32,
+    c_uint64,
+)
+from typing import ClassVar, Iterable, SupportsBytes, SupportsInt, Type, TypeVar, Union
 
 if sys.version_info >= (3, 8):
     from typing import Literal
 else:
     from typing_extensions import Literal
 
+__all__ = [
+    "ByteOrder",
+    "IntVar",
+    "IntType",
+    "Integer",
+    "Int8",
+    "Int16",
+    "Int32",
+    "Int64",
+    "UInt8",
+    "UInt16",
+    "UInt32",
+    "UInt64",
+    "int8",
+    "int16",
+    "int32",
+    "int64",
+    "uint8",
+    "uint16",
+    "uint32",
+    "uint64",
+]
+
+_T = TypeVar(
+    "_T",
+    "Int8",
+    "Int16",
+    "Int32",
+    "Int64",
+    "UInt8",
+    "UInt16",
+    "UInt32",
+    "UInt64",
+)
+
+_CtypesIntVar = Union[
+    c_int8, c_int16, c_int32, c_int64, c_uint8, c_uint16, c_uint32, c_uint64
+]
+_CtypesIntType = Type[_CtypesIntVar]
+
+
 ByteOrder = Literal["little", "big"]
 
 IntVar = Union["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"]
 IntType = Type[IntVar]
+
+
+class _IntOp:
+    def __call__(self, other: SupportsInt) -> IntVar:
+        ...
+
+
+class _ComparisonOp:
+    def __call__(self, other: SupportsInt) -> bool:
+        ...
+
+
+class _UnaryOp:
+    def __call__(self) -> IntVar:
+        ...
 
 
 class IntMeta(type):
@@ -105,7 +171,7 @@ class IntMeta(type):
             if args:
                 other = args[0]
 
-                if isinstance(other, IntBase):
+                if isinstance(other, Integer):
                     if self.get_size() == other.get_size():
                         data_type = type(other if self.get_signed() else self)
 
@@ -137,14 +203,51 @@ class IntMeta(type):
         return decorator
 
 
-class IntBase:
+class Integer:
     """Base class of integer type."""
+
+    _base: _CtypesIntType
+    _size: ClassVar[int]
+    _signed: ClassVar[bool]
+
+    _impl: _CtypesIntVar
 
     def __init__(self, val: SupportsInt):
         self._impl = self._base(int(val))
 
     def __int__(self) -> int:
         return int(self._impl.value)
+
+    __neg__: _UnaryOp
+    __pos__: _UnaryOp
+    __abs__: _UnaryOp
+    __add__: _IntOp
+    __radd__: _IntOp
+    __sub__: _IntOp
+    __rsub__: _IntOp
+    __mul__: _IntOp
+    __rmul__: _IntOp
+    __truediv__: _IntOp
+    __rtruediv__: _IntOp
+    __floordiv__: _IntOp
+    __rfloordiv__: _IntOp
+    __mod__: _IntOp
+    __rmod__: _IntOp
+    __invert__: _UnaryOp
+    __and__: _IntOp
+    __rand__: _IntOp
+    __or__: _IntOp
+    __ror__: _IntOp
+    __xor__: _IntOp
+    __rxor__: _IntOp
+    __lshift__: _IntOp
+    __rlshift__: _IntOp
+    __rshift__: _IntOp
+    __rrshift__: _IntOp
+    __gt__: _ComparisonOp
+    __ge__: _ComparisonOp
+    __le__: _ComparisonOp
+    __lt__: _ComparisonOp
 
     @classmethod
     def get_size(cls) -> int:
@@ -174,35 +277,35 @@ class IntBase:
         )
 
 
-class Int8(IntBase, metaclass=IntMeta):
+class Int8(Integer, metaclass=IntMeta):
     """Int8"""
 
 
-class Int16(IntBase, metaclass=IntMeta):
+class Int16(Integer, metaclass=IntMeta):
     """Int16"""
 
 
-class Int32(IntBase, metaclass=IntMeta):
+class Int32(Integer, metaclass=IntMeta):
     """Int32"""
 
 
-class Int64(IntBase, metaclass=IntMeta):
+class Int64(Integer, metaclass=IntMeta):
     """Int64"""
 
 
-class UInt8(IntBase, metaclass=IntMeta):
+class UInt8(Integer, metaclass=IntMeta):
     """UInt8"""
 
 
-class UInt16(IntBase, metaclass=IntMeta):
+class UInt16(Integer, metaclass=IntMeta):
     """UInt16"""
 
 
-class UInt32(IntBase, metaclass=IntMeta):
+class UInt32(Integer, metaclass=IntMeta):
     """UInt32"""
 
 
-class UInt64(IntBase, metaclass=IntMeta):
+class UInt64(Integer, metaclass=IntMeta):
     """UInt64"""
 
 
