@@ -6,9 +6,7 @@ from .ida import cfadd, ofsub, ofadd
 from ..types import Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64
 from ..utils import get_type
 
-# Refer to https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra
-# /Features/Decompiler/src/main/help/help/topics/DecompilePlugin
-# /DecompilerConcepts.html
+# Refer to https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra/Features/Decompiler/src/main/help/help/topics/DecompilePlugin/DecompilerConcepts.html    # noqa: E501
 
 _T1 = TypeVar("_T1", Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
 _T2 = TypeVar("_T2", Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
