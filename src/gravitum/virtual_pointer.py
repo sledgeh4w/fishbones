@@ -1,7 +1,7 @@
 from typing import List, Union
 
 from .exceptions import InvalidOperationError
-from .types import ByteOrder, IntBase, IntType, IntVar, UInt8
+from .types import ByteOrder, Integer, IntType, IntVar, UInt8
 from .utils import get_type
 
 
@@ -45,7 +45,7 @@ class VirtualPointer:
             except ValueError as e:
                 raise InvalidOperationError("Unsupported type") from e
 
-        elif issubclass(type_or_name, IntBase):
+        elif issubclass(type_or_name, Integer):
             self._data_type = type_or_name
 
         else:
@@ -77,14 +77,14 @@ class VirtualPointer:
         return obj
 
     def read_bytes(self, size: int) -> bytes:
-        """Read bytes from the source bytearray."""
+        """Read bytes from source bytearray."""
         if self.offset + size > len(self.source):
             raise InvalidOperationError("Read out of range")
 
         return bytes(self.source[self.offset : self.offset + size])
 
     def write_bytes(self, data: Union[bytes, bytearray, List[int]]):
-        """Write bytes into the source bytearray."""
+        """Write bytes into source bytearray."""
         try:
             for i, v in enumerate(data):
                 self.source[self.offset + i] = v
@@ -93,12 +93,12 @@ class VirtualPointer:
             raise InvalidOperationError("Write out of range") from e
 
     def read(self) -> IntVar:
-        """Read an integer from the source bytearray."""
+        """Read an integer from source bytearray."""
         data = self.read_bytes(self.data_type.get_size())
         return self.data_type.from_bytes(data, byteorder=self.byteorder)
 
     def write(self, value: Union[IntVar, int]):
-        """Write an integer into the source bytearray."""
+        """Write an integer into source bytearray."""
         data = self.data_type(value).to_bytes(byteorder=self.byteorder)
         self.write_bytes(data)
 
