@@ -6,7 +6,7 @@ from .utils import get_type
 
 
 class VirtualPointer:
-    """Provide virtual pointer operation on bytearray."""
+    """Provide pointer operation on bytearray."""
 
     def __init__(
         self,
