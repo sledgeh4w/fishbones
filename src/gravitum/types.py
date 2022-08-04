@@ -191,7 +191,7 @@ class IntMeta(type):
 
 
 class _IntTyping:
-    """Type hint for integer types"""
+    """Type hint for integer type."""
 
     _base: _CtypesIntType
     _size: ClassVar[int]
