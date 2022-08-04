@@ -1,8 +1,9 @@
 import pytest
 
-from gravitum import uint32, Int8, UInt8
+from gravitum import uint32
 from gravitum.decompiler.ida import (
-    offset_n,
+    byten,
+    sbyten,
     rol4,
     ror4,
     ofsub,
@@ -15,14 +16,14 @@ from gravitum.decompiler.ida import (
 
 
 @pytest.mark.parametrize(
-    "x,n,t,expected",
+    "x,n,signed,expected",
     [
-        (uint32(0x53683477), 3, UInt8, 83),
-        (uint32(0xFFFFFFFF), 3, Int8, -1),
+        (uint32(0x53683477), 3, False, 83),
+        (uint32(0xFFFFFFFF), 3, True, -1),
     ],
 )
-def test_offset_n(x, n, t, expected):
-    result = offset_n(x, n, t)
+def test_byte_n(x, n, signed, expected):
+    result = (sbyten if signed else byten)(x, n)
 
     assert result == expected
 
