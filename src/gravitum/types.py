@@ -11,7 +11,7 @@ from ctypes import (
     c_uint32,
     c_uint64,
 )
-from typing import ClassVar, Iterable, SupportsBytes, SupportsInt, Type, TypeVar, Union
+from typing import ClassVar, Iterable, SupportsBytes, SupportsInt, Type, Union
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -41,28 +41,64 @@ __all__ = [
     "uint64",
 ]
 
-_T = TypeVar(
-    "_T",
-    "Int8",
-    "Int16",
-    "Int32",
-    "Int64",
-    "UInt8",
-    "UInt16",
-    "UInt32",
-    "UInt64",
-)
-
 _CtypesIntVar = Union[
     c_int8, c_int16, c_int32, c_int64, c_uint8, c_uint16, c_uint32, c_uint64
 ]
 _CtypesIntType = Type[_CtypesIntVar]
 
-
 ByteOrder = Literal["little", "big"]
 
 IntVar = Union["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"]
 IntType = Type[IntVar]
+
+_INT_OPERATIONS = [
+    "__neg__",
+    "__pos__",
+    "__abs__",
+    "__add__",
+    "__radd__",
+    "__iadd__",
+    "__sub__",
+    "__rsub__",
+    "__isub__",
+    "__mul__",
+    "__rmul__",
+    "__imul__",
+    "__truediv__",
+    "__rtruediv__",
+    "__itruediv__",
+    "__floordiv__",
+    "__rfloordiv__",
+    "__ifloordiv__",
+    "__mod__",
+    "__rmod__",
+    "__imod__",
+    "__invert__",
+    "__and__",
+    "__rand__",
+    "__iand__",
+    "__or__",
+    "__ror__",
+    "__ior__",
+    "__xor__",
+    "__rxor__",
+    "__ixor__",
+    "__lshift__",
+    "__rlshift__",
+    "__ilshift__",
+    "__rshift__",
+    "__rrshift__",
+    "__irshift__",
+]
+
+_INT_COMPARISONS = [
+    "__gt__",
+    "__ge__",
+    "__eq__",
+    "__le__",
+    "__lt__",
+    "__ne__",
+]
 
 
 class _IntOp:
@@ -83,55 +119,6 @@ class _UnaryOp:
 class IntMeta(type):
     """Meta class of integer type."""
 
-    _SUPPORT_OPERATIONS = [
-        "__neg__",
-        "__pos__",
-        "__abs__",
-        "__add__",
-        "__radd__",
-        "__iadd__",
-        "__sub__",
-        "__rsub__",
-        "__isub__",
-        "__mul__",
-        "__rmul__",
-        "__imul__",
-        "__truediv__",
-        "__rtruediv__",
-        "__itruediv__",
-        "__floordiv__",
-        "__rfloordiv__",
-        "__ifloordiv__",
-        "__mod__",
-        "__rmod__",
-        "__imod__",
-        "__invert__",
-        "__and__",
-        "__rand__",
-        "__iand__",
-        "__or__",
-        "__ror__",
-        "__ior__",
-        "__xor__",
-        "__rxor__",
-        "__ixor__",
-        "__lshift__",
-        "__rlshift__",
-        "__ilshift__",
-        "__rshift__",
-        "__rrshift__",
-        "__irshift__",
-    ]
-
-    _SUPPORT_COMPARISONS = [
-        "__gt__",
-        "__ge__",
-        "__eq__",
-        "__le__",
-        "__lt__",
-        "__ne__",
-    ]
-
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
 
@@ -144,11 +131,11 @@ class IntMeta(type):
         signed = bool(re.match(r"Int\d+", cls.__name__))
         setattr(cls, "_signed", signed)
 
-        for func in cls._SUPPORT_OPERATIONS:
-            setattr(cls, func, cls.build_operation(func))
+        for f in _INT_OPERATIONS:
+            setattr(cls, f, cls.build_operation(f))
 
-        for func in cls._SUPPORT_COMPARISONS:
-            setattr(cls, func, cls.build_comparison(func))
+        for f in _INT_COMPARISONS:
+            setattr(cls, f, cls.build_comparison(f))
 
     @staticmethod
     def build_operation(func):
@@ -203,20 +190,14 @@ class IntMeta(type):
         return decorator
 
 
-class Integer:
-    """Base class of integer type."""
+class _IntTyping:
+    """Type hint for integer types"""
 
     _base: _CtypesIntType
     _size: ClassVar[int]
     _signed: ClassVar[bool]
 
     _impl: _CtypesIntVar
-
-    def __init__(self, val: SupportsInt):
-        self._impl = self._base(int(val))
-
-    def __int__(self) -> int:
-        return int(self._impl.value)
 
     __neg__: _UnaryOp
     __pos__: _UnaryOp
@@ -248,6 +229,16 @@ class Integer:
     __ge__: _ComparisonOp
     __le__: _ComparisonOp
     __lt__: _ComparisonOp
+
+
+class Integer(_IntTyping):
+    """Base class of integer type."""
+
+    def __init__(self, val: SupportsInt):
+        self._impl = self._base(int(val))
+
+    def __int__(self) -> int:
+        return int(self._impl.value)
 
     @classmethod
     def get_size(cls) -> int:
