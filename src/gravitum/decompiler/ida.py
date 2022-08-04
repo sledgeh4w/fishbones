@@ -33,6 +33,13 @@ BYTE_ORDER: Literal["big", "little"] = LITTLE_ENDIAN
 # Refer to defs.h of IDA.
 
 
+def _part(x: IntVar, n: int, t: Type[_T]) -> _T:
+    """Get the partial value."""
+    size = t.get_size()
+    data = x.to_bytes(byteorder=BYTE_ORDER)
+    return t.from_bytes(data[n * size : (n + 1) * size], byteorder=BYTE_ORDER)
+
+
 def last_ind(x: IntVar, part_type: IntType) -> int:
     """Implementation of `LAST_IND`."""
     return x.get_size() // part_type.get_size() - 1
@@ -48,26 +55,19 @@ def high_ind(x: IntVar, part_type: IntType) -> int:
     return 0 if BYTE_ORDER == BIG_ENDIAN else last_ind(x, part_type)
 
 
-def offset_n(x: IntVar, n: int, t: Type[_T]) -> _T:
-    """Get the nth member of the data."""
-    size = t.get_size()
-    data = x.to_bytes(byteorder=BYTE_ORDER)
-    return t.from_bytes(data[n * size : (n + 1) * size], byteorder=BYTE_ORDER)
-
-
 def byten(x: IntVar, n: int) -> UInt8:
     """Implementation of `BYTEn`."""
-    return offset_n(x, n, UInt8)
+    return _part(x, n, UInt8)
 
 
 def wordn(x: IntVar, n: int) -> UInt16:
     """Implementation of `WORDn`."""
-    return offset_n(x, n, UInt16)
+    return _part(x, n, UInt16)
 
 
 def dwordn(x: IntVar, n: int) -> UInt32:
     """Implementation of `DWORDn`."""
-    return offset_n(x, n, UInt32)
+    return _part(x, n, UInt32)
 
 
 def lobyte(x: IntVar) -> UInt8:
@@ -227,17 +227,17 @@ def dword3(x: IntVar) -> UInt32:
 
 def sbyten(x: IntVar, n: int) -> Int8:
     """Implementation of `SBYTEn`."""
-    return offset_n(x, n, Int8)
+    return _part(x, n, Int8)
 
 
 def swordn(x: IntVar, n: int) -> Int16:
     """Implementation of `SWORDn`."""
-    return offset_n(x, n, Int16)
+    return _part(x, n, Int16)
 
 
 def sdwordn(x: IntVar, n: int) -> Int32:
     """Implementation of `SDWORDn`."""
-    return offset_n(x, n, Int32)
+    return _part(x, n, Int32)
 
 
 def slobyte(x: IntVar) -> Int8:
@@ -524,25 +524,25 @@ def cfadd(x: IntVar, y: IntVar) -> Int8:
 # Refer to https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html.
 
 
-def swap_bytes(value: _T) -> _T:
-    """Reverse bytes of the value with the order."""
+def _swap_bytes(value: _T) -> _T:
+    """Reverse bytes of the value."""
     data = value.to_bytes(byteorder=BYTE_ORDER)
     return value.from_bytes(data[::-1], byteorder=BYTE_ORDER)
 
 
 def bswap16(value: UInt16) -> UInt16:
     """Implementation of `bswap16`."""
-    return swap_bytes(value)
+    return _swap_bytes(value)
 
 
 def bswap32(value: UInt32) -> UInt32:
     """Implementation of `bswap32`."""
-    return swap_bytes(value)
+    return _swap_bytes(value)
 
 
 def bswap64(value: UInt64) -> UInt64:
     """Implementation of `bswap64`."""
-    return swap_bytes(value)
+    return _swap_bytes(value)
 
 
 def clz(x: IntVar) -> Int8:
