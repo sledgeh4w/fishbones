@@ -119,61 +119,61 @@ def sext48(x: UInt32) -> UInt64:
     return _sign_extend(x, UInt32, UInt64)
 
 
-def sborrow1(x: UInt8, y: UInt8) -> Int8:
+def sborrow1(x: UInt8, y: UInt8) -> int:
     """Implementation of `SBORROW1`."""
     return ofsub(x, y)
 
 
-def sborrow2(x: UInt16, y: UInt16) -> Int8:
+def sborrow2(x: UInt16, y: UInt16) -> int:
     """Implementation of `SBORROW2`."""
     return ofsub(x, y)
 
 
-def sborrow4(x: UInt32, y: UInt32) -> Int8:
+def sborrow4(x: UInt32, y: UInt32) -> int:
     """Implementation of `SBORROW4`."""
     return ofsub(x, y)
 
 
-def sborrow8(x: UInt64, y: UInt64) -> Int8:
+def sborrow8(x: UInt64, y: UInt64) -> int:
     """Implementation of `SBORROW8`."""
     return ofsub(x, y)
 
 
-def carry1(x: UInt8, y: UInt8) -> Int8:
+def carry1(x: UInt8, y: UInt8) -> int:
     """Implementation of `CARRY1`."""
     return cfadd(x, y)
 
 
-def carry2(x: UInt16, y: UInt16) -> Int8:
+def carry2(x: UInt16, y: UInt16) -> int:
     """Implementation of `CARRY2`."""
     return cfadd(x, y)
 
 
-def carry4(x: UInt32, y: UInt32) -> Int8:
+def carry4(x: UInt32, y: UInt32) -> int:
     """Implementation of `CARRY4`."""
     return cfadd(x, y)
 
 
-def carry8(x: UInt64, y: UInt64) -> Int8:
+def carry8(x: UInt64, y: UInt64) -> int:
     """Implementation of `CARRY8`."""
     return cfadd(x, y)
 
 
-def scarry1(x: Int8, y: Int8) -> Int8:
+def scarry1(x: Int8, y: Int8) -> int:
     """Implementation of `SCARRY1`."""
     return ofadd(x, y)
 
 
-def scarry2(x: Int16, y: Int16) -> Int8:
+def scarry2(x: Int16, y: Int16) -> int:
     """Implementation of `SCARRY2`."""
     return ofadd(x, y)
 
 
-def scarry4(x: Int32, y: Int32) -> Int8:
+def scarry4(x: Int32, y: Int32) -> int:
     """Implementation of `SCARRY4`."""
     return ofadd(x, y)
 
 
-def scarry8(x: Int64, y: Int64) -> Int8:
+def scarry8(x: Int64, y: Int64) -> int:
     """Implementation of `SCARRY8`."""
     return ofadd(x, y)
