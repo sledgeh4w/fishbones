@@ -465,60 +465,60 @@ def ror8(value: UInt64, count: int) -> UInt64:
     return UInt64(rol(value, -count))
 
 
-def mkcshl(value: IntVar, count: int) -> Int8:
+def mkcshl(value: IntVar, count: int) -> int:
     """Implementation of `__MKCSHL__`."""
     nbits = value.get_size() * 8
     count %= nbits
-    return Int8((value >> (nbits - count)) & 1)
+    return int((value >> (nbits - count)) & 1)
 
 
-def mkcshr(value: IntVar, count: int) -> Int8:
+def mkcshr(value: IntVar, count: int) -> int:
     """Implementation of `__MKCSHR__`."""
-    return Int8((value >> (count - 1)) & 1)
+    return int((value >> (count - 1)) & 1)
 
 
-def sets(x: IntVar) -> Int8:
+def sets(x: IntVar) -> int:
     """Implementation of `__SETS__`."""
     data_type = get_type(size=x.get_size(), signed=True)
-    return Int8(data_type(x) < 0)
+    return int(data_type(x) < 0)
 
 
-def ofsub(x: IntVar, y: IntVar) -> Int8:
+def ofsub(x: IntVar, y: IntVar) -> int:
     """Implementation of `__OFSUB__`."""
     if x.get_size() < y.get_size():
         x2 = x
         sx = sets(x2)
-        return Int8((sx ^ sets(y)) & (sx ^ sets(x2 - y)))
+        return int((sx ^ sets(y)) & (sx ^ sets(x2 - y)))
     else:
         y2 = y
         sx = sets(x)
-        return Int8((sx ^ sets(y2)) & (sx ^ sets(x - y2)))
+        return int((sx ^ sets(y2)) & (sx ^ sets(x - y2)))
 
 
-def ofadd(x: IntVar, y: IntVar) -> Int8:
+def ofadd(x: IntVar, y: IntVar) -> int:
     """Implementation of `__OFADD__`."""
     if x.get_size() < y.get_size():
         x2 = x
         sx = sets(x2)
-        return Int8(((1 ^ sx) ^ sets(y)) & (sx ^ sets(x2 + y)))
+        return int(((1 ^ sx) ^ sets(y)) & (sx ^ sets(x2 + y)))
     else:
         y2 = y
         sx = sets(x)
-        return Int8(((1 ^ sx) ^ sets(y2)) & (sx ^ sets(x + y2)))
+        return int(((1 ^ sx) ^ sets(y2)) & (sx ^ sets(x + y2)))
 
 
-def cfsub(x: IntVar, y: IntVar) -> Int8:
+def cfsub(x: IntVar, y: IntVar) -> int:
     """Implementation of `__CFSUB__`."""
     size = max(x.get_size(), y.get_size())
     data_type = get_type(size=size, signed=False)
-    return Int8(data_type(x) < data_type(y))
+    return int(data_type(x) < data_type(y))
 
 
-def cfadd(x: IntVar, y: IntVar) -> Int8:
+def cfadd(x: IntVar, y: IntVar) -> int:
     """Implementation of `__CFADD__`."""
     size = max(x.get_size(), y.get_size())
     data_type = get_type(size=size, signed=False)
-    return Int8(data_type(x) > data_type(x + y))
+    return int(data_type(x) > data_type(x + y))
 
 
 # Refer to https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html.
@@ -545,6 +545,6 @@ def bswap64(value: UInt64) -> UInt64:
     return _swap_bytes(value)
 
 
-def clz(x: IntVar) -> Int8:
+def clz(x: IntVar) -> int:
     """Implementation of `__clz`."""
-    return Int8(x.get_size() * 8 - len(bin(int(x))[2:]))
+    return x.get_size() * 8 - len(bin(int(x))[2:])
