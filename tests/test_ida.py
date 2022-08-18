@@ -1,7 +1,7 @@
 import pytest
 
 from gravitum import uint32
-from gravitum.decompiler.ida import (
+from gravitum.decompiler_builtins.ida import (
     byten,
     sbyten,
     rol4,
