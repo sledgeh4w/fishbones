@@ -3,7 +3,7 @@
 from typing import Type, TypeVar
 
 from .ida import cfadd, ofsub, ofadd
-from ..types import IntVar, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64
+from ..types import Integer, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64
 from ..utils import get_type
 
 # Refer to https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra/Features/Decompiler/src/main/help/help/topics/DecompilePlugin/DecompilerConcepts.html    # noqa: E501
@@ -11,17 +11,17 @@ from ..utils import get_type
 _T = TypeVar("_T", Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
 
 
-def _truncate(x: IntVar, c: int, to_type: Type[_T]) -> _T:
+def _truncate(x: Integer, c: int, to_type: Type[_T]) -> _T:
     """Truncation operation."""
     return to_type.from_bytes(x.to_bytes()[c : c + to_type.get_size()])
 
 
-def _zero_extend(x: IntVar, to_type: Type[_T]) -> _T:
+def _zero_extend(x: Integer, to_type: Type[_T]) -> _T:
     """Zero-extension operator."""
     return to_type.from_bytes(x.to_bytes())
 
 
-def _sign_extend(x: IntVar, to_type: Type[_T]) -> _T:
+def _sign_extend(x: Integer, to_type: Type[_T]) -> _T:
     """Sign-extension operator."""
     t1 = get_type(size=x.get_size(), signed=True)
     t2 = get_type(size=to_type.get_size(), signed=True)

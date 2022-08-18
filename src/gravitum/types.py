@@ -1,18 +1,7 @@
 import ctypes
 import re
-import sys
-
-from typing import Type, Union
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 __all__ = [
-    "ByteOrder",
-    "IntVar",
-    "IntType",
     "Integer",
     "Int8",
     "Int16",
@@ -31,11 +20,6 @@ __all__ = [
     "uint32",
     "uint64",
 ]
-
-ByteOrder = Literal["little", "big"]
-
-IntVar = Union["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"]
-IntType = Type[IntVar]
 
 _INT_OPERATIONS = [
     "__neg__",
