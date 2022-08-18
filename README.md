@@ -51,11 +51,11 @@ v = p.add(4).read()
 p.cast('uint32').add(1).write(v)
 ```
 
-In some cases, decompilers may use their built-in functions in the output. Gravitum implementes some of them. You can look up from `gravitum.decompiler`.
+In some cases, decompilers may use their built-in functions in the output. Gravitum implements some of them. You can look up from `gravitum.decompiler_builtins`.
 
 ```python
 from gravitum import uint32
-from gravitum.decompiler.ida import ror4
+from gravitum.decompiler_builtins.ida import ror4
 
 v = uint32(0x53683477)
 v = ror4(v, 2)

@@ -116,6 +116,47 @@ class _UnaryOp:
         ...
 
 
+class _IntTyping:
+    """Type hint for integer type."""
+
+    _base: _CtypesIntType
+    _size: ClassVar[int]
+    _signed: ClassVar[bool]
+
+    _impl: _CtypesIntVar
+
+    __neg__: _UnaryOp
+    __pos__: _UnaryOp
+    __abs__: _UnaryOp
+    __add__: _IntOp
+    __radd__: _IntOp
+    __sub__: _IntOp
+    __rsub__: _IntOp
+    __mul__: _IntOp
+    __rmul__: _IntOp
+    __truediv__: _IntOp
+    __rtruediv__: _IntOp
+    __floordiv__: _IntOp
+    __rfloordiv__: _IntOp
+    __mod__: _IntOp
+    __rmod__: _IntOp
+    __invert__: _UnaryOp
+    __and__: _IntOp
+    __rand__: _IntOp
+    __or__: _IntOp
+    __ror__: _IntOp
+    __xor__: _IntOp
+    __rxor__: _IntOp
+    __lshift__: _IntOp
+    __rlshift__: _IntOp
+    __rshift__: _IntOp
+    __rrshift__: _IntOp
+    __gt__: _ComparisonOp
+    __ge__: _ComparisonOp
+    __le__: _ComparisonOp
+    __lt__: _ComparisonOp
+
+
 class IntMeta(type):
     """Meta class of integer type."""
 
@@ -188,47 +229,6 @@ class IntMeta(type):
             return cmp(self._impl.value, int(other))
 
         return decorator
-
-
-class _IntTyping:
-    """Type hint for integer type."""
-
-    _base: _CtypesIntType
-    _size: ClassVar[int]
-    _signed: ClassVar[bool]
-
-    _impl: _CtypesIntVar
-
-    __neg__: _UnaryOp
-    __pos__: _UnaryOp
-    __abs__: _UnaryOp
-    __add__: _IntOp
-    __radd__: _IntOp
-    __sub__: _IntOp
-    __rsub__: _IntOp
-    __mul__: _IntOp
-    __rmul__: _IntOp
-    __truediv__: _IntOp
-    __rtruediv__: _IntOp
-    __floordiv__: _IntOp
-    __rfloordiv__: _IntOp
-    __mod__: _IntOp
-    __rmod__: _IntOp
-    __invert__: _UnaryOp
-    __and__: _IntOp
-    __rand__: _IntOp
-    __or__: _IntOp
-    __ror__: _IntOp
-    __xor__: _IntOp
-    __rxor__: _IntOp
-    __lshift__: _IntOp
-    __rlshift__: _IntOp
-    __rshift__: _IntOp
-    __rrshift__: _IntOp
-    __gt__: _ComparisonOp
-    __ge__: _ComparisonOp
-    __le__: _ComparisonOp
-    __lt__: _ComparisonOp
 
 
 class Integer(_IntTyping):
