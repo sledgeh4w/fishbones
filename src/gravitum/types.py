@@ -1,17 +1,8 @@
 import ctypes
 import re
 import sys
-from ctypes import (
-    c_int8,
-    c_int16,
-    c_int32,
-    c_int64,
-    c_uint8,
-    c_uint16,
-    c_uint32,
-    c_uint64,
-)
-from typing import ClassVar, Iterable, SupportsBytes, SupportsInt, Type, Union
+
+from typing import Type, Union
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -40,11 +31,6 @@ __all__ = [
     "uint32",
     "uint64",
 ]
-
-_CtypesIntVar = Union[
-    c_int8, c_int16, c_int32, c_int64, c_uint8, c_uint16, c_uint32, c_uint64
-]
-_CtypesIntType = Type[_CtypesIntVar]
 
 ByteOrder = Literal["little", "big"]
 
@@ -99,62 +85,6 @@ _INT_COMPARISONS = [
     "__lt__",
     "__ne__",
 ]
-
-
-class _IntOp:
-    def __call__(self, other: SupportsInt) -> IntVar:
-        ...
-
-
-class _ComparisonOp:
-    def __call__(self, other: SupportsInt) -> bool:
-        ...
-
-
-class _UnaryOp:
-    def __call__(self) -> IntVar:
-        ...
-
-
-class _IntTyping:
-    """Type hint for integer type."""
-
-    _base: _CtypesIntType
-    _size: ClassVar[int]
-    _signed: ClassVar[bool]
-
-    _impl: _CtypesIntVar
-
-    __neg__: _UnaryOp
-    __pos__: _UnaryOp
-    __abs__: _UnaryOp
-    __add__: _IntOp
-    __radd__: _IntOp
-    __sub__: _IntOp
-    __rsub__: _IntOp
-    __mul__: _IntOp
-    __rmul__: _IntOp
-    __truediv__: _IntOp
-    __rtruediv__: _IntOp
-    __floordiv__: _IntOp
-    __rfloordiv__: _IntOp
-    __mod__: _IntOp
-    __rmod__: _IntOp
-    __invert__: _UnaryOp
-    __and__: _IntOp
-    __rand__: _IntOp
-    __or__: _IntOp
-    __ror__: _IntOp
-    __xor__: _IntOp
-    __rxor__: _IntOp
-    __lshift__: _IntOp
-    __rlshift__: _IntOp
-    __rshift__: _IntOp
-    __rrshift__: _IntOp
-    __gt__: _ComparisonOp
-    __ge__: _ComparisonOp
-    __le__: _ComparisonOp
-    __lt__: _ComparisonOp
 
 
 class IntMeta(type):
@@ -231,35 +161,31 @@ class IntMeta(type):
         return decorator
 
 
-class Integer(_IntTyping):
+class Integer:
     """Base class of integer type."""
 
-    def __init__(self, val: SupportsInt):
+    def __init__(self, val):
         self._impl = self._base(int(val))
 
-    def __int__(self) -> int:
+    def __int__(self):
         return int(self._impl.value)
 
     @classmethod
-    def get_size(cls) -> int:
+    def get_size(cls):
         """Get size (bytes) of this type."""
         return cls._size
 
     @classmethod
-    def get_signed(cls) -> bool:
+    def get_signed(cls):
         """Get signed of this type."""
         return cls._signed
 
     @classmethod
-    def from_bytes(
-        cls,
-        data: Union[Iterable[int], SupportsBytes],
-        byteorder: ByteOrder = "little",
-    ):
+    def from_bytes(cls, data, byteorder="little"):
         """Return a value of this type from given bytes"""
         return cls(int.from_bytes(data, byteorder=byteorder, signed=cls.get_signed()))
 
-    def to_bytes(self, byteorder: ByteOrder = "little") -> bytes:
+    def to_bytes(self, byteorder="little"):
         """Covert this value to bytes."""
         return int(self).to_bytes(
             length=self.get_size(),
@@ -300,41 +226,41 @@ class UInt64(Integer, metaclass=IntMeta):
     """UInt64"""
 
 
-def int8(v: SupportsInt) -> Int8:
+def int8(v):
     """Shorthand of `Int8(v)`."""
     return Int8(v)
 
 
-def int16(v: SupportsInt) -> Int16:
+def int16(v):
     """Shorthand of `Int16(v)`."""
     return Int16(v)
 
 
-def int32(v: SupportsInt) -> Int32:
+def int32(v):
     """Shorthand of `Int32(v)`."""
     return Int32(v)
 
 
-def int64(v: SupportsInt) -> Int64:
+def int64(v):
     """Shorthand of `Int64(v)`."""
     return Int64(v)
 
 
-def uint8(v: SupportsInt) -> UInt8:
+def uint8(v):
     """Shorthand of `UInt8(v)`."""
     return UInt8(v)
 
 
-def uint16(v: SupportsInt) -> UInt16:
+def uint16(v):
     """Shorthand of `UInt16(v)`."""
     return UInt16(v)
 
 
-def uint32(v: SupportsInt) -> UInt32:
+def uint32(v):
     """Shorthand of `UInt32(v)`."""
     return UInt32(v)
 
 
-def uint64(v: SupportsInt) -> UInt64:
+def uint64(v):
     """Shorthand of `UInt64(v)`."""
     return UInt64(v)
