@@ -16,32 +16,28 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-_CtypesIntVar = Union[
+_CtypesInt = Union[
     c_int8, c_int16, c_int32, c_int64, c_uint8, c_uint16, c_uint32, c_uint64
 ]
-_CtypesIntType = Type[_CtypesIntVar]
 
 ByteOrder = Literal["little", "big"]
 
-IntVar = Union["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"]
-IntType = Type[IntVar]
-
 class _IntOp:
-    def __call__(self, other: SupportsInt) -> IntVar: ...
+    def __call__(self, other: SupportsInt) -> Integer: ...
 
 class _ComparisonOp:
     def __call__(self, other: SupportsInt) -> bool: ...
 
 class _UnaryOp:
-    def __call__(self) -> IntVar: ...
+    def __call__(self) -> Integer: ...
 
 class Integer:
 
-    _base: _CtypesIntType
+    _base: Type[_CtypesInt]
     _size: ClassVar[int]
     _signed: ClassVar[bool]
 
-    _impl: _CtypesIntVar
+    _impl: _CtypesInt
 
     def __init__(self, val: SupportsInt): ...
     def __int__(self) -> int: ...
@@ -84,7 +80,7 @@ class Integer:
     @classmethod
     def from_bytes(
         cls,
-        data: Union[Iterable[int], SupportsBytes],
+        data: Union[Iterable[SupportsInt], SupportsBytes],
         byteorder: ByteOrder = "little",
     ): ...
     def to_bytes(self, byteorder: ByteOrder = "little") -> bytes: ...

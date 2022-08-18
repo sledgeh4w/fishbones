@@ -1,8 +1,14 @@
-from typing import List, Union
+import sys
+from typing import List, Type, Union
 
 from .exceptions import InvalidOperationError
-from .types import ByteOrder, Integer, IntType, IntVar, UInt8
+from .types import Integer, UInt8
 from .utils import get_type
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 
 class VirtualPointer:
@@ -11,8 +17,8 @@ class VirtualPointer:
     def __init__(
         self,
         source: bytearray,
-        data_type: Union[IntType, str],
-        byteorder: ByteOrder = "little",
+        data_type: Union[Type[Integer], str],
+        byteorder: Literal["little", "big"] = "little",
         offset: int = 0,
     ):
         self._data_type = None
@@ -36,7 +42,7 @@ class VirtualPointer:
         return self._data_type
 
     @data_type.setter
-    def data_type(self, type_or_name: Union[IntType, str]):
+    def data_type(self, type_or_name: Union[Type[Integer], str]):
         """Set data type."""
         if isinstance(type_or_name, str):
             try:
@@ -70,7 +76,7 @@ class VirtualPointer:
         """Reverse offset this pointer position."""
         return self.add(-num)
 
-    def cast(self, data_type: Union[IntType, str]) -> "VirtualPointer":
+    def cast(self, data_type: Union[Type[Integer], str]) -> "VirtualPointer":
         """Cast to the specified type."""
         obj = self.copy()
         obj.data_type = data_type
@@ -92,12 +98,12 @@ class VirtualPointer:
         except IndexError as e:
             raise InvalidOperationError("Write out of range") from e
 
-    def read(self) -> IntVar:
+    def read(self) -> Integer:
         """Read an integer from source bytearray."""
         data = self.read_bytes(self.data_type.get_size())
         return self.data_type.from_bytes(data, byteorder=self.byteorder)
 
-    def write(self, value: Union[IntVar, int]):
+    def write(self, value: Union[Integer, int]):
         """Write an integer into source bytearray."""
         data = self.data_type(value).to_bytes(byteorder=self.byteorder)
         self.write_bytes(data)
@@ -105,8 +111,8 @@ class VirtualPointer:
 
 def vptr(
     source: bytearray,
-    data_type: Union[IntType, str] = UInt8,
-    byteorder: ByteOrder = "little",
+    data_type: Union[Type[Integer], str] = UInt8,
+    byteorder: Literal["little", "big"] = "little",
 ) -> VirtualPointer:
     """Shorthand of `VirtualPointer(source, data_type)`."""
     return VirtualPointer(source=source, data_type=data_type, byteorder=byteorder)
