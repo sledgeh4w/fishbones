@@ -1,14 +1,14 @@
 import pytest
 
-from gravitum import int8, uint8, uint32, UInt8, UInt32
+from gravitum import int8, uint8, uint32
 
 
 @pytest.mark.parametrize(
     "x,y,expected",
     [
-        (int8(1), uint8(1), UInt8),
-        (uint8(1), 1, UInt8),
-        (uint8(1), uint32(1), UInt32),
+        (int8(1), uint8(1), uint8),
+        (uint8(1), 1, uint8),
+        (uint8(1), uint32(1), uint32),
     ],
 )
 def test_type_conversion(x, y, expected):

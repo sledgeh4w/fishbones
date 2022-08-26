@@ -1,12 +1,12 @@
 import pytest
 
-from gravitum import vptr, uint32, UInt8
+from gravitum import vptr, uint8, uint32
 
 
 @pytest.mark.parametrize(
     "source_data,read_offset,read_type,expected",
     [
-        (bytearray([71, 114, 97, 118, 105, 116, 117, 109]), 4, UInt8, 105),
+        (bytearray([71, 114, 97, 118, 105, 116, 117, 109]), 4, uint8, 105),
     ],
 )
 def test_read(source_data, read_offset, read_type, expected):

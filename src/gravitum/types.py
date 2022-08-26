@@ -1,26 +1,6 @@
 import ctypes
 import re
 
-__all__ = [
-    "Integer",
-    "Int8",
-    "Int16",
-    "Int32",
-    "Int64",
-    "UInt8",
-    "UInt16",
-    "UInt32",
-    "UInt64",
-    "int8",
-    "int16",
-    "int32",
-    "int64",
-    "uint8",
-    "uint16",
-    "uint32",
-    "uint64",
-]
-
 _INT_OPERATIONS = [
     "__neg__",
     "__pos__",
@@ -210,41 +190,13 @@ class UInt64(Integer, metaclass=IntMeta):
     """UInt64"""
 
 
-def int8(v):
-    """Shorthand of `Int8(v)`."""
-    return Int8(v)
+integer = Integer
 
-
-def int16(v):
-    """Shorthand of `Int16(v)`."""
-    return Int16(v)
-
-
-def int32(v):
-    """Shorthand of `Int32(v)`."""
-    return Int32(v)
-
-
-def int64(v):
-    """Shorthand of `Int64(v)`."""
-    return Int64(v)
-
-
-def uint8(v):
-    """Shorthand of `UInt8(v)`."""
-    return UInt8(v)
-
-
-def uint16(v):
-    """Shorthand of `UInt16(v)`."""
-    return UInt16(v)
-
-
-def uint32(v):
-    """Shorthand of `UInt32(v)`."""
-    return UInt32(v)
-
-
-def uint64(v):
-    """Shorthand of `UInt64(v)`."""
-    return UInt64(v)
+int8 = Int8
+int16 = Int16
+int32 = Int32
+int64 = Int64
+uint8 = UInt8
+uint16 = UInt16
+uint32 = UInt32
+uint64 = UInt64
