@@ -1,58 +1,39 @@
 import ctypes
 import re
 
-_INT_OPERATIONS = [
-    "__neg__",
-    "__pos__",
-    "__abs__",
-    "__add__",
-    "__radd__",
-    "__iadd__",
-    "__sub__",
-    "__rsub__",
-    "__isub__",
-    "__mul__",
-    "__rmul__",
-    "__imul__",
-    "__truediv__",
-    "__rtruediv__",
-    "__itruediv__",
-    "__floordiv__",
-    "__rfloordiv__",
-    "__ifloordiv__",
-    "__mod__",
-    "__rmod__",
-    "__imod__",
-    "__invert__",
-    "__and__",
-    "__rand__",
-    "__iand__",
-    "__or__",
-    "__ror__",
-    "__ior__",
-    "__xor__",
-    "__rxor__",
-    "__ixor__",
-    "__lshift__",
-    "__rlshift__",
-    "__ilshift__",
-    "__rshift__",
-    "__rrshift__",
-    "__irshift__",
-]
-
-_INT_COMPARISONS = [
-    "__gt__",
-    "__ge__",
-    "__eq__",
-    "__le__",
-    "__lt__",
-    "__ne__",
-]
-
 
 class IntMeta(type):
     """Meta class of integer type."""
+
+    _UNARY_OPS = [
+        "__neg__",
+        "__pos__",
+        "__abs__",
+        "__invert__",
+    ]
+
+    _BINARY_OPS = [
+        "__add__",
+        "__sub__",
+        "__mul__",
+        "__truediv__",
+        "__floordiv__",
+        "__mod__",
+        "__and__",
+        "__or__",
+        "__xor__",
+        "__lshift__",
+        "__rshift__",
+    ]
+
+    _COMPARISONS = [
+        "__gt__",
+        "__ge__",
+        "__eq__",
+        "__le__",
+        "__lt__",
+        "__ne__",
+    ]
 
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
@@ -66,14 +47,18 @@ class IntMeta(type):
         signed = bool(re.match(r"Int\d+", cls.__name__))
         setattr(cls, "_signed", signed)
 
-        for f in _INT_OPERATIONS:
-            setattr(cls, f, cls.build_operation(f))
+        for f in cls._UNARY_OPS:
+            setattr(cls, f, cls._build_operation(f))
 
-        for f in _INT_COMPARISONS:
-            setattr(cls, f, cls.build_comparison(f))
+        for f in cls._BINARY_OPS:
+            for s in ["", "r", "i"]:
+                setattr(cls, s + f, cls._build_operation(s + f))
+
+        for f in cls._COMPARISONS:
+            setattr(cls, f, cls._build_comparison(f))
 
     @staticmethod
-    def build_operation(func):
+    def _build_operation(func):
         """Build operation method.
 
         If it is a unary operation, the result is still the own type.
@@ -120,7 +105,7 @@ class IntMeta(type):
         return decorator
 
     @staticmethod
-    def build_comparison(func):
+    def _build_comparison(func):
         """Build comparison method."""
 
         def decorator(self, other):
