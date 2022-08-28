@@ -5,35 +5,18 @@ import re
 class IntMeta(type):
     """Meta class of integer type."""
 
-    _UNARY_OPS = [
-        "__neg__",
-        "__pos__",
-        "__abs__",
-        "__invert__",
-    ]
+    # fmt: off
+
+    _UNARY_OPS = ["__neg__", "__pos__", "__abs__", "__invert__"]
 
     _BINARY_OPS = [
-        "__add__",
-        "__sub__",
-        "__mul__",
-        "__truediv__",
-        "__floordiv__",
-        "__mod__",
-        "__and__",
-        "__or__",
-        "__xor__",
-        "__lshift__",
-        "__rshift__",
+        "__add__", "__sub__", "__mul__", "__truediv__", "__floordiv__", "__mod__",
+        "__and__", "__or__", "__xor__", "__lshift__", "__rshift__",
     ]
 
-    _COMPARISONS = [
-        "__gt__",
-        "__ge__",
-        "__eq__",
-        "__le__",
-        "__lt__",
-        "__ne__",
-    ]
+    _COMPARISONS = ["__gt__", "__ge__", "__eq__", "__le__", "__lt__", "__ne__"]
+
+    # fmt: on
 
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
