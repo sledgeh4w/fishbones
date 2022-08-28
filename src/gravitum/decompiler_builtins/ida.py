@@ -23,7 +23,7 @@ BYTE_ORDER: Literal["big", "little"] = LITTLE_ENDIAN
 
 
 def _partn(x: Integer, n: int, t: Type[_T]) -> _T:
-    """Get the nth value with the specified type."""
+    """Get the nth partial value with the specified type."""
     size = t.get_size()
     data = x.to_bytes(byteorder=BYTE_ORDER)
     return t.from_bytes(data[n * size : (n + 1) * size], byteorder=BYTE_ORDER)
