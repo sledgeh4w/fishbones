@@ -22,8 +22,8 @@ BYTE_ORDER: Literal["big", "little"] = LITTLE_ENDIAN
 # Refer to defs.h of IDA.
 
 
-def _part(x: Integer, n: int, t: Type[_T]) -> _T:
-    """Get the partial value."""
+def _partn(x: Integer, n: int, t: Type[_T]) -> _T:
+    """Get the nth value with the specified type."""
     size = t.get_size()
     data = x.to_bytes(byteorder=BYTE_ORDER)
     return t.from_bytes(data[n * size : (n + 1) * size], byteorder=BYTE_ORDER)
@@ -46,17 +46,17 @@ def high_ind(x: Integer, part_type: Type[Integer]) -> int:
 
 def byten(x: Integer, n: int) -> UInt8:
     """Implementation of `BYTEn`."""
-    return _part(x, n, UInt8)
+    return _partn(x, n, UInt8)
 
 
 def wordn(x: Integer, n: int) -> UInt16:
     """Implementation of `WORDn`."""
-    return _part(x, n, UInt16)
+    return _partn(x, n, UInt16)
 
 
 def dwordn(x: Integer, n: int) -> UInt32:
     """Implementation of `DWORDn`."""
-    return _part(x, n, UInt32)
+    return _partn(x, n, UInt32)
 
 
 def lobyte(x: Integer) -> UInt8:
@@ -216,17 +216,17 @@ def dword3(x: Integer) -> UInt32:
 
 def sbyten(x: Integer, n: int) -> Int8:
     """Implementation of `SBYTEn`."""
-    return _part(x, n, Int8)
+    return _partn(x, n, Int8)
 
 
 def swordn(x: Integer, n: int) -> Int16:
     """Implementation of `SWORDn`."""
-    return _part(x, n, Int16)
+    return _partn(x, n, Int16)
 
 
 def sdwordn(x: Integer, n: int) -> Int32:
     """Implementation of `SDWORDn`."""
-    return _part(x, n, Int32)
+    return _partn(x, n, Int32)
 
 
 def slobyte(x: Integer) -> Int8:
