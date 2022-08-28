@@ -19,7 +19,14 @@ def get_type(
     signed: Optional[bool] = None,
     type_name: Optional[str] = None,
 ) -> Type[integer]:
-    """Get type int with specified size and signed."""
+    """Get type int with specified size and signed.
+
+    Args:
+        size: The size of the type.
+        signed: The signed of the type.
+        type_name: The lowercase name of type to find.
+            If it is None, ``size`` and ``signed`` must be given.
+    """
     if type_name is not None:
         match = re.match(r"(u*)int(\d+)", type_name)
         if not match:

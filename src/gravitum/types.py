@@ -76,10 +76,11 @@ class IntMeta(type):
     def build_operation(func):
         """Build operation method.
 
-        If it is a unary operation, the result is still its own type.
-        If the other operand is int, it will be converted to its own type.
-        If the type of another operand is inconsistent with its own type,
-        they are converted to larger size or unsigned type.
+        If it is a unary operation, the result is still the own type.
+        If the type of another operand is ``Integer`` and is inconsistent with
+        the own type, they result will be converted to larger size or unsigned type.
+        If another operand is ``int`` or can be converted to ``int``, the result
+        will be converted to the own type.
         """
 
         def decorator(self, *args):
@@ -90,13 +91,17 @@ class IntMeta(type):
             except AttributeError:
                 return NotImplemented
 
+            # If an binary operation
             if args:
                 other = args[0]
 
                 if isinstance(other, Integer):
+                    # If their sizes are equal, the type of result is unsigned.
                     if self.get_size() == other.get_size():
                         data_type = type(other if self.get_signed() else self)
 
+                    # If their sizes are not equal, the type of result is
+                    # larger size type.
                     else:
                         if self.get_size() < other.get_size():
                             data_type = type(other)
@@ -126,10 +131,14 @@ class IntMeta(type):
 
 
 class Integer:
-    """Base class of integer type."""
+    """Base class of integer type.
 
-    def __init__(self, val):
-        self._impl = self._base(int(val))
+    Args:
+        v: A value can be converted to ``int``.
+    """
+
+    def __init__(self, v):
+        self._impl = self._base(int(v))
 
     def __int__(self):
         return int(self._impl.value)

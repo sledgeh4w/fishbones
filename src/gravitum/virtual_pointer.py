@@ -12,7 +12,15 @@ else:
 
 
 class VirtualPointer:
-    """Provide pointer operation on bytearray."""
+    """Provide pointer operation on bytearray.
+
+    Args:
+        source: The source ``bytearray`` to be read / write.
+        data_type: The type of operated data. If it is ``str``, it will use
+            ``utils.get_type`` to look up the type.
+        byteorder: The byteorder of operated data.
+        offset: The distance from beginning to operating position.
+    """
 
     def __init__(
         self,
@@ -58,7 +66,10 @@ class VirtualPointer:
             raise TypeError()
 
     def copy(self) -> "VirtualPointer":
-        """Copy this object."""
+        """Copy this object.
+
+        The new object and the old object will operate on the same ``bytearray``.
+        """
         return self.__class__(
             source=self.source,
             data_type=self.data_type,
@@ -83,14 +94,14 @@ class VirtualPointer:
         return obj
 
     def read_bytes(self, size: int) -> bytes:
-        """Read bytes from source bytearray."""
+        """Read bytes from source ``bytearray``."""
         if self.offset + size > len(self.source):
             raise InvalidOperationError("Read out of range")
 
         return bytes(self.source[self.offset : self.offset + size])
 
     def write_bytes(self, data: Union[bytes, bytearray, List[SupportsInt]]):
-        """Write bytes into source bytearray."""
+        """Write bytes into source ``bytearray``."""
         try:
             for i, v in enumerate(data):
                 self.source[self.offset + i] = int(v)
@@ -99,12 +110,12 @@ class VirtualPointer:
             raise InvalidOperationError("Write out of range") from e
 
     def read(self) -> integer:
-        """Read an integer from source bytearray."""
+        """Read an integer from source ``bytearray``."""
         data = self.read_bytes(self.data_type.get_size())
         return self.data_type.from_bytes(data, byteorder=self.byteorder)
 
     def write(self, value: Union[integer, SupportsInt]):
-        """Write an integer into source bytearray."""
+        """Write an integer into source ``bytearray``."""
         data = self.data_type(value).to_bytes(byteorder=self.byteorder)
         self.write_bytes(data)
 
@@ -114,5 +125,5 @@ def vptr(
     data_type: Union[Type[integer], str] = uint8,
     byteorder: Literal["little", "big"] = "little",
 ) -> VirtualPointer:
-    """Shorthand of `VirtualPointer(source, data_type)`."""
+    """Shorthand of `VirtualPointer(source, data_type, byteorder)`."""
     return VirtualPointer(source=source, data_type=data_type, byteorder=byteorder)

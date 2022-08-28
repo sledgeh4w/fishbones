@@ -22,14 +22,14 @@ _CtypesInt = Union[
 
 ByteOrder = Literal["little", "big"]
 
+class _UnaryOp:
+    def __call__(self) -> Integer: ...
+
 class _IntOp:
     def __call__(self, other: SupportsInt) -> Integer: ...
 
 class _ComparisonOp:
     def __call__(self, other: SupportsInt) -> bool: ...
-
-class _UnaryOp:
-    def __call__(self) -> Integer: ...
 
 class Integer:
 
@@ -39,7 +39,7 @@ class Integer:
 
     _impl: _CtypesInt
 
-    def __init__(self, val: SupportsInt): ...
+    def __init__(self, v: SupportsInt): ...
     def __int__(self) -> int: ...
 
     __neg__: _UnaryOp
