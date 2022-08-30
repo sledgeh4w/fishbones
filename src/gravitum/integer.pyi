@@ -22,16 +22,20 @@ _CtypesInt = Union[
 
 ByteOrder = Literal["little", "big"]
 
-class _UnaryOp:
-    def __call__(self) -> Integer: ...
+IntVar = Union["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"]
 
-class _IntOp:
-    def __call__(self, other: SupportsInt) -> Integer: ...
+IntType = Type[IntVar]
+
+class _UnaryOp:
+    def __call__(self) -> IntVar: ...
+
+class _BinaryOp:
+    def __call__(self, other: SupportsInt) -> IntVar: ...
 
 class _ComparisonOp:
     def __call__(self, other: SupportsInt) -> bool: ...
 
-class Integer:
+class IntBase:
 
     _base: Type[_CtypesInt]
     _size: ClassVar[int]
@@ -45,29 +49,29 @@ class Integer:
     __neg__: _UnaryOp
     __pos__: _UnaryOp
     __abs__: _UnaryOp
-    __add__: _IntOp
-    __radd__: _IntOp
-    __sub__: _IntOp
-    __rsub__: _IntOp
-    __mul__: _IntOp
-    __rmul__: _IntOp
-    __truediv__: _IntOp
-    __rtruediv__: _IntOp
-    __floordiv__: _IntOp
-    __rfloordiv__: _IntOp
-    __mod__: _IntOp
-    __rmod__: _IntOp
+    __add__: _BinaryOp
+    __radd__: _BinaryOp
+    __sub__: _BinaryOp
+    __rsub__: _BinaryOp
+    __mul__: _BinaryOp
+    __rmul__: _BinaryOp
+    __truediv__: _BinaryOp
+    __rtruediv__: _BinaryOp
+    __floordiv__: _BinaryOp
+    __rfloordiv__: _BinaryOp
+    __mod__: _BinaryOp
+    __rmod__: _BinaryOp
     __invert__: _UnaryOp
-    __and__: _IntOp
-    __rand__: _IntOp
-    __or__: _IntOp
-    __ror__: _IntOp
-    __xor__: _IntOp
-    __rxor__: _IntOp
-    __lshift__: _IntOp
-    __rlshift__: _IntOp
-    __rshift__: _IntOp
-    __rrshift__: _IntOp
+    __and__: _BinaryOp
+    __rand__: _BinaryOp
+    __or__: _BinaryOp
+    __ror__: _BinaryOp
+    __xor__: _BinaryOp
+    __rxor__: _BinaryOp
+    __lshift__: _BinaryOp
+    __rlshift__: _BinaryOp
+    __rshift__: _BinaryOp
+    __rrshift__: _BinaryOp
     __gt__: _ComparisonOp
     __ge__: _ComparisonOp
     __le__: _ComparisonOp
@@ -85,16 +89,14 @@ class Integer:
     ): ...
     def to_bytes(self, byteorder: ByteOrder = "little") -> bytes: ...
 
-class Int8(Integer): ...
-class Int16(Integer): ...
-class Int32(Integer): ...
-class Int64(Integer): ...
-class UInt8(Integer): ...
-class UInt16(Integer): ...
-class UInt32(Integer): ...
-class UInt64(Integer): ...
-
-integer = Integer
+class Int8(IntBase): ...
+class Int16(IntBase): ...
+class Int32(IntBase): ...
+class Int64(IntBase): ...
+class UInt8(IntBase): ...
+class UInt16(IntBase): ...
+class UInt32(IntBase): ...
+class UInt64(IntBase): ...
 
 int8 = Int8
 int16 = Int16
