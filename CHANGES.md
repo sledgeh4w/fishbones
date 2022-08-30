@@ -1,11 +1,5 @@
-## v0.0.8
+## v0.1.0
 
 Released: -
 
-- Add stub file of `types`.
-- Change functions `int*` and `uint*` to reference of the source type.
-
-## v0.0.7
-Released: 2022-07-29
-
-- Refactor class `Integer` while remove dependency on numpy.
+- Refactor integer types.
