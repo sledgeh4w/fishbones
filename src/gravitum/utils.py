@@ -1,17 +1,7 @@
 import re
 from typing import List, Optional
 
-from .integer import (
-    IntType,
-    int8,
-    int16,
-    int32,
-    int64,
-    uint8,
-    uint16,
-    uint32,
-    uint64,
-)
+from .integer import IntType, int8, int16, int32, int64, uint8, uint16, uint32, uint64
 
 
 def get_type(
@@ -39,16 +29,8 @@ def get_type(
         signed = not bool(match.group(1))
         size = nbits // 8
 
-    int_types: List[IntType] = [
-        int8,
-        int16,
-        int32,
-        int64,
-        uint8,
-        uint16,
-        uint32,
-        uint64,
-    ]
+    int_types: List[IntType]
+    int_types = [int8, int16, int32, int64, uint8, uint16, uint32, uint64]
 
     for int_type in int_types:
         if int_type.get_size() == size and int_type.get_signed() == signed:

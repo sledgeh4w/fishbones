@@ -2,18 +2,13 @@
 
 from typing import Type, TypeVar
 
-from .ida import cfadd, ofsub, ofadd
+from .ida import _truncate, cfadd, ofsub, ofadd
 from ..integer import IntVar, int8, int16, int32, int64, uint8, uint16, uint32, uint64
 from ..utils import get_type
 
 # Refer to https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra/Features/Decompiler/src/main/help/help/topics/DecompilePlugin/DecompilerConcepts.html    # noqa: E501
 
 _T = TypeVar("_T", int8, int16, int32, int64, uint8, uint16, uint32, uint64)
-
-
-def _truncate(x: IntVar, c: int, to_type: Type[_T]) -> _T:
-    """Truncation operation."""
-    return to_type.from_bytes(x.to_bytes()[c : c + to_type.get_size()])
 
 
 def _zero_extend(x: IntVar, to_type: Type[_T]) -> _T:
