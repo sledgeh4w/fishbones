@@ -1,58 +1,32 @@
 import ctypes
 import re
+from typing import Type, Union
 
-_INT_OPERATIONS = [
-    "__neg__",
-    "__pos__",
-    "__abs__",
-    "__add__",
-    "__radd__",
-    "__iadd__",
-    "__sub__",
-    "__rsub__",
-    "__isub__",
-    "__mul__",
-    "__rmul__",
-    "__imul__",
-    "__truediv__",
-    "__rtruediv__",
-    "__itruediv__",
-    "__floordiv__",
-    "__rfloordiv__",
-    "__ifloordiv__",
-    "__mod__",
-    "__rmod__",
-    "__imod__",
-    "__invert__",
-    "__and__",
-    "__rand__",
-    "__iand__",
-    "__or__",
-    "__ror__",
-    "__ior__",
-    "__xor__",
-    "__rxor__",
-    "__ixor__",
-    "__lshift__",
-    "__rlshift__",
-    "__ilshift__",
-    "__rshift__",
-    "__rrshift__",
-    "__irshift__",
-]
+IntVar = Union["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"]
 
-_INT_COMPARISONS = [
-    "__gt__",
-    "__ge__",
-    "__eq__",
-    "__le__",
-    "__lt__",
-    "__ne__",
-]
+IntType = Type[IntVar]
 
 
 class IntMeta(type):
     """Meta class of integer type."""
+
+    _UNARY_OPS = ["__neg__", "__pos__", "__abs__", "__invert__"]
+
+    _BINARY_OPS = [
+        "__add__",
+        "__sub__",
+        "__mul__",
+        "__truediv__",
+        "__floordiv__",
+        "__mod__",
+        "__and__",
+        "__or__",
+        "__xor__",
+        "__lshift__",
+        "__rshift__",
+    ]
+
+    _COMPARISONS = ["__gt__", "__ge__", "__eq__", "__le__", "__lt__", "__ne__"]
 
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
@@ -66,14 +40,17 @@ class IntMeta(type):
         signed = bool(re.match(r"Int\d+", cls.__name__))
         setattr(cls, "_signed", signed)
 
-        for f in _INT_OPERATIONS:
-            setattr(cls, f, cls.build_operation(f))
+        for f in cls._UNARY_OPS:
+            setattr(cls, f, cls._build_operation(f))
 
-        for f in _INT_COMPARISONS:
-            setattr(cls, f, cls.build_comparison(f))
+        for f in cls._BINARY_OPS:
+            setattr(cls, f, cls._build_operation(f))
+
+        for f in cls._COMPARISONS:
+            setattr(cls, f, cls._build_comparison(f))
 
     @staticmethod
-    def build_operation(func):
+    def _build_operation(func):
         """Build operation method.
 
         If it is a unary operation, the result is still the own type.
@@ -95,7 +72,7 @@ class IntMeta(type):
             if args:
                 other = args[0]
 
-                if isinstance(other, Integer):
+                if isinstance(other, IntBase):
                     # If their sizes are equal, the type of result is unsigned.
                     if self.get_size() == other.get_size():
                         data_type = type(other if self.get_signed() else self)
@@ -120,7 +97,7 @@ class IntMeta(type):
         return decorator
 
     @staticmethod
-    def build_comparison(func):
+    def _build_comparison(func):
         """Build comparison method."""
 
         def decorator(self, other):
@@ -130,12 +107,8 @@ class IntMeta(type):
         return decorator
 
 
-class Integer:
-    """Base class of integer type.
-
-    Args:
-        v: A value can be converted to ``int``.
-    """
+class IntBase:
+    """Base class of integer type."""
 
     def __init__(self, v):
         self._impl = self._base(int(v))
@@ -167,39 +140,37 @@ class Integer:
         )
 
 
-class Int8(Integer, metaclass=IntMeta):
+class Int8(IntBase, metaclass=IntMeta):
     """Int8"""
 
 
-class Int16(Integer, metaclass=IntMeta):
+class Int16(IntBase, metaclass=IntMeta):
     """Int16"""
 
 
-class Int32(Integer, metaclass=IntMeta):
+class Int32(IntBase, metaclass=IntMeta):
     """Int32"""
 
 
-class Int64(Integer, metaclass=IntMeta):
+class Int64(IntBase, metaclass=IntMeta):
     """Int64"""
 
 
-class UInt8(Integer, metaclass=IntMeta):
+class UInt8(IntBase, metaclass=IntMeta):
     """UInt8"""
 
 
-class UInt16(Integer, metaclass=IntMeta):
+class UInt16(IntBase, metaclass=IntMeta):
     """UInt16"""
 
 
-class UInt32(Integer, metaclass=IntMeta):
+class UInt32(IntBase, metaclass=IntMeta):
     """UInt32"""
 
 
-class UInt64(Integer, metaclass=IntMeta):
+class UInt64(IntBase, metaclass=IntMeta):
     """UInt64"""
 
-
-integer = Integer
 
 int8 = Int8
 int16 = Int16
