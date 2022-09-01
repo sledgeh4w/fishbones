@@ -64,7 +64,7 @@ class IntMeta(type):
             except AttributeError:
                 return NotImplemented
 
-            # If an binary operation
+            # If a binary operation
             if args:
                 other = args[0]
 
