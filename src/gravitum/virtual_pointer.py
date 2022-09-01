@@ -2,7 +2,7 @@ import sys
 from typing import List, Union, SupportsInt
 
 from .exceptions import InvalidOperationError
-from .integer import IntType, IntVar, uint8
+from .integer import IntVar, IntType, IntBase, uint8
 from .utils import get_type
 
 if sys.version_info >= (3, 8):
@@ -59,11 +59,11 @@ class VirtualPointer:
             except ValueError as e:
                 raise InvalidOperationError("Unsupported type") from e
 
-        elif isinstance(type_or_name, type):
+        elif isinstance(type_or_name, type) and issubclass(type_or_name, IntBase):
             self._data_type = type_or_name
 
         else:
-            raise TypeError()
+            raise TypeError("Invalid type")
 
     def copy(self) -> "VirtualPointer":
         """Copy this object.

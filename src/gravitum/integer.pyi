@@ -22,10 +22,6 @@ _CtypesInt = Union[
 
 ByteOrder = Literal["little", "big"]
 
-IntVar = Union["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"]
-
-IntType = Type[IntVar]
-
 class _UnaryOp:
     def __call__(self) -> IntVar: ...
 
@@ -106,3 +102,6 @@ uint8 = UInt8
 uint16 = UInt16
 uint32 = UInt32
 uint64 = UInt64
+
+IntVar = IntBase
+IntType = Type[IntVar]
