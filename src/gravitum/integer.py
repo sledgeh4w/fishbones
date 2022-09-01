@@ -2,27 +2,32 @@ import ctypes
 import re
 from typing import Type
 
+# Magic methods to be defined so that integer types can support
+# operations and comparisons.
+
+_INT_OP = [
+    "__neg__",
+    "__pos__",
+    "__abs__",
+    "__add__",
+    "__sub__",
+    "__mul__",
+    "__truediv__",
+    "__floordiv__",
+    "__mod__",
+    "__invert__",
+    "__and__",
+    "__or__",
+    "__xor__",
+    "__lshift__",
+    "__rshift__",
+]
+
+_INT_CMP = ["__gt__", "__ge__", "__eq__", "__le__", "__lt__", "__ne__"]
+
 
 class IntMeta(type):
     """Metaclass of integer type."""
-
-    _UNARY_OPS = ["__neg__", "__pos__", "__abs__", "__invert__"]
-
-    _BINARY_OPS = [
-        "__add__",
-        "__sub__",
-        "__mul__",
-        "__truediv__",
-        "__floordiv__",
-        "__mod__",
-        "__and__",
-        "__or__",
-        "__xor__",
-        "__lshift__",
-        "__rshift__",
-    ]
-
-    _COMPARISONS = ["__gt__", "__ge__", "__eq__", "__le__", "__lt__", "__ne__"]
 
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
@@ -36,10 +41,10 @@ class IntMeta(type):
         signed = bool(re.match(r"Int\d+", cls.__name__))
         setattr(cls, "_signed", signed)
 
-        for op in (*cls._UNARY_OPS, *cls._BINARY_OPS):
+        for op in _INT_OP:
             setattr(cls, op, cls._build_operation(op))
 
-        for cmp in cls._COMPARISONS:
+        for cmp in _INT_CMP:
             setattr(cls, cmp, cls._build_comparison(cmp))
 
     @staticmethod
@@ -173,7 +178,6 @@ uint8 = UInt8
 uint16 = UInt16
 uint32 = UInt32
 uint64 = UInt64
-
 
 # Used as typing
 IntVar = IntBase
