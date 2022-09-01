@@ -1,14 +1,10 @@
 import ctypes
 import re
-from typing import Type, Union
-
-IntVar = Union["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"]
-
-IntType = Type[IntVar]
+from typing import Type
 
 
 class IntMeta(type):
-    """Meta class of integer type."""
+    """Metaclass of integer type."""
 
     _UNARY_OPS = ["__neg__", "__pos__", "__abs__", "__invert__"]
 
@@ -68,7 +64,7 @@ class IntMeta(type):
             except AttributeError:
                 return NotImplemented
 
-            # If an binary operation
+            # If a binary operation
             if args:
                 other = args[0]
 
@@ -180,3 +176,8 @@ uint8 = UInt8
 uint16 = UInt16
 uint32 = UInt32
 uint64 = UInt64
+
+
+# Used as typing
+IntVar = IntBase
+IntType = Type[IntVar]
