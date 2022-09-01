@@ -36,17 +36,14 @@ class IntMeta(type):
         signed = bool(re.match(r"Int\d+", cls.__name__))
         setattr(cls, "_signed", signed)
 
-        for f in cls._UNARY_OPS:
-            setattr(cls, f, cls._build_operation(f))
+        for op in (*cls._UNARY_OPS, *cls._BINARY_OPS):
+            setattr(cls, op, cls._build_operation(op))
 
-        for f in cls._BINARY_OPS:
-            setattr(cls, f, cls._build_operation(f))
-
-        for f in cls._COMPARISONS:
-            setattr(cls, f, cls._build_comparison(f))
+        for cmp in cls._COMPARISONS:
+            setattr(cls, cmp, cls._build_comparison(cmp))
 
     @staticmethod
-    def _build_operation(func):
+    def _build_operation(func_name):
         """Build operation method.
 
         If it is a unary operation, the result is still the own type.
@@ -60,7 +57,7 @@ class IntMeta(type):
             data_type = type(self)
 
             try:
-                operator = getattr(int, func)
+                operator = getattr(int, func_name)
             except AttributeError:
                 return NotImplemented
 
@@ -93,12 +90,12 @@ class IntMeta(type):
         return decorator
 
     @staticmethod
-    def _build_comparison(func):
+    def _build_comparison(func_name):
         """Build comparison method."""
 
         def decorator(self, other):
-            cmp = getattr(int, func)
-            return cmp(self._impl.value, int(other))
+            func = getattr(int, func_name)
+            return func(self._impl.value, int(other))
 
         return decorator
 
