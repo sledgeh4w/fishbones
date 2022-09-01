@@ -2,8 +2,7 @@ import ctypes
 import re
 from typing import Type
 
-# Magic methods to be defined so that integer types can support
-# operations and comparisons.
+# Operation and comparison methods of integer types to be defined.
 
 _INT_OP = [
     "__neg__",
