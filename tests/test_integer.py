@@ -14,6 +14,12 @@ from operator import (
     xor,
     lshift,
     rshift,
+    gt,
+    ge,
+    eq,
+    le,
+    lt,
+    ne,
 )
 
 import pytest
@@ -53,6 +59,29 @@ def test_unary_operation(x, op, expected):
     ],
 )
 def test_binary_operation(x, y, op, expected):
+    result = op(x, y)
+
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "x,y,op,expected",
+    [
+        (int8(1), int8(0), gt, True),
+        (int8(1), int8(1), gt, False),
+        (int8(1), int8(1), ge, True),
+        (int8(0), int8(1), ge, False),
+        (int8(1), int8(1), eq, True),
+        (int8(1), int8(0), eq, False),
+        (int8(1), int8(1), le, True),
+        (int8(1), int8(0), le, False),
+        (int8(0), int8(1), lt, True),
+        (int8(1), int8(1), lt, False),
+        (int8(1), int8(0), ne, True),
+        (int8(1), int8(1), ne, False),
+    ],
+)
+def test_comparison(x, y, op, expected):
     result = op(x, y)
 
     assert result == expected
