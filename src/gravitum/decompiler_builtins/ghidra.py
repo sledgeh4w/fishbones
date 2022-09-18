@@ -69,12 +69,12 @@ def zext18(x: uint8) -> uint64:
 
 
 def zext24(x: uint16) -> uint32:
-    """Implementation of `ZEXT14`."""
+    """Implementation of `ZEXT24`."""
     return _zero_extend(x, uint32)
 
 
 def zext28(x: uint16) -> uint64:
-    """Implementation of `ZEXT18`."""
+    """Implementation of `ZEXT28`."""
     return _zero_extend(x, uint64)
 
 
@@ -99,12 +99,12 @@ def sext18(x: uint8) -> uint64:
 
 
 def sext24(x: uint16) -> uint32:
-    """Implementation of `SEXT14`."""
+    """Implementation of `SEXT24`."""
     return _sign_extend(x, uint32)
 
 
 def sext28(x: uint16) -> uint64:
-    """Implementation of `SEXT18`."""
+    """Implementation of `SEXT28`."""
     return _sign_extend(x, uint64)
 
 
