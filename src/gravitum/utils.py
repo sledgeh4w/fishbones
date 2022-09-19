@@ -1,14 +1,9 @@
 import re
-from typing import Optional
 
-from .integer import IntType, int8, int16, int32, int64, uint8, uint16, uint32, uint64
+from .integer import int8, int16, int32, int64, uint8, uint16, uint32, uint64
 
 
-def get_type(
-    size: Optional[int] = None,
-    signed: Optional[bool] = None,
-    type_name: Optional[str] = None,
-) -> IntType:
+def get_type(size=None, signed=None, type_name=None):
     """Get type int with specified size and signed.
 
     Args:
