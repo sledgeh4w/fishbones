@@ -1,14 +1,6 @@
-import sys
-from typing import List, Union, SupportsInt
-
 from .exceptions import InvalidOperationError
-from .integer import IntVar, IntType, IntBase, uint8
+from .integer import IntBase, uint8
 from .utils import get_type
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 
 class VirtualPointer:
@@ -22,15 +14,7 @@ class VirtualPointer:
         offset: The distance from beginning to operating position.
     """
 
-    def __init__(
-        self,
-        source: bytearray,
-        data_type: Union[IntType, str] = uint8,
-        byteorder: Literal["little", "big"] = "little",
-        offset: int = 0,
-    ):
-        self._data_type = None
-
+    def __init__(self, source, data_type=uint8, byteorder="little", offset=0):
         self.source = source
         self.byteorder = byteorder
         self.offset = offset
@@ -50,7 +34,7 @@ class VirtualPointer:
         return self._data_type
 
     @data_type.setter
-    def data_type(self, type_or_name: Union[IntType, str]):
+    def data_type(self, type_or_name):
         """Set data type."""
         if isinstance(type_or_name, str):
             try:
@@ -65,7 +49,7 @@ class VirtualPointer:
         else:
             raise TypeError("Invalid type")
 
-    def copy(self) -> "VirtualPointer":
+    def copy(self):
         """Copy this object.
 
         The new object and the old object will operate on the same ``bytearray``.
@@ -77,30 +61,30 @@ class VirtualPointer:
             offset=self.offset,
         )
 
-    def add(self, num: int) -> "VirtualPointer":
+    def add(self, num):
         """Offset this pointer position."""
         obj = self.copy()
         obj.offset += num * self.data_type.get_size()
         return obj
 
-    def sub(self, num: int) -> "VirtualPointer":
+    def sub(self, num):
         """Reverse offset this pointer position."""
         return self.add(-num)
 
-    def cast(self, data_type: Union[IntType, str]) -> "VirtualPointer":
+    def cast(self, data_type):
         """Cast to the specified type."""
         obj = self.copy()
         obj.data_type = data_type
         return obj
 
-    def read_bytes(self, size: int) -> bytes:
+    def read_bytes(self, size):
         """Read bytes from source ``bytearray``."""
         if self.offset + size > len(self.source):
             raise InvalidOperationError("Read out of range")
 
         return bytes(self.source[self.offset : self.offset + size])
 
-    def write_bytes(self, data: Union[bytes, bytearray, List[SupportsInt]]):
+    def write_bytes(self, data):
         """Write bytes into source ``bytearray``."""
         try:
             for i, v in enumerate(data):
@@ -109,21 +93,17 @@ class VirtualPointer:
         except IndexError as e:
             raise InvalidOperationError("Write out of range") from e
 
-    def read(self) -> IntVar:
+    def read(self):
         """Read an integer from source ``bytearray``."""
         data = self.read_bytes(self.data_type.get_size())
         return self.data_type.from_bytes(data, byteorder=self.byteorder)
 
-    def write(self, value: SupportsInt):
+    def write(self, value):
         """Write an integer into source ``bytearray``."""
         data = self.data_type(value).to_bytes(byteorder=self.byteorder)
         self.write_bytes(data)
 
 
-def vptr(
-    source: bytearray,
-    data_type: Union[IntType, str] = uint8,
-    byteorder: Literal["little", "big"] = "little",
-) -> VirtualPointer:
+def vptr(source, data_type=uint8, byteorder="little"):
     """Shorthand of `VirtualPointer(source, data_type, byteorder)`."""
     return VirtualPointer(source=source, data_type=data_type, byteorder=byteorder)
