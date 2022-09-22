@@ -36,10 +36,8 @@ class IntBase:
     _size: ClassVar[int]
     _signed: ClassVar[bool]
     _impl: _CtypesInt
-
     def __init__(self, x: SupportsInt): ...
     def __int__(self) -> int: ...
-
     __neg__: _UnaryOp
     __pos__: _UnaryOp
     __abs__: _UnaryOp
@@ -70,7 +68,6 @@ class IntBase:
     __ge__: _ComparisonOp
     __le__: _ComparisonOp
     __lt__: _ComparisonOp
-
     @classmethod
     def get_size(cls) -> int: ...
     @classmethod

@@ -9,10 +9,10 @@ else:
     from typing_extensions import Literal
 
 class VirtualPointer:
+    _data_type: IntType
     source: bytearray
     byteorder: Literal["little", "big"]
     offset: int
-
     def __init__(
         self,
         source: bytearray,
