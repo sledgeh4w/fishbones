@@ -1,7 +1,7 @@
 import sys
 from typing import List, Optional, SupportsInt, Union
 
-from .integer import IntVar, IntType, uint8
+from .integer import IntType, IntVar, uint8
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -20,7 +20,7 @@ class VirtualPointer:
         self,
         source: bytearray,
         data_type: Union[IntType, str] = uint8,
-        byteorder: Literal["little", "big"] = "little",
+        byteorder: Optional[Literal["little", "big"]] = None,
         offset: int = 0,
     ): ...
     def __add__(self, other): ...
@@ -41,5 +41,5 @@ class VirtualPointer:
 def vptr(
     source: bytearray,
     data_type: Union[IntType, str] = uint8,
-    byteorder: Literal["little", "big"] = "little",
+    byteorder: Optional[Literal["little", "big"]] = None,
 ) -> VirtualPointer: ...

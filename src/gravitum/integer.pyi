@@ -9,7 +9,7 @@ from ctypes import (
     c_uint32,
     c_uint64,
 )
-from typing import ClassVar, Iterable, SupportsBytes, SupportsInt, Type, Union
+from typing import ClassVar, Iterable, Optional, SupportsBytes, SupportsInt, Type, Union
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -20,7 +20,7 @@ _CtypesInt = Union[
     c_int8, c_int16, c_int32, c_int64, c_uint8, c_uint16, c_uint32, c_uint64
 ]
 
-ByteOrder = Literal["little", "big"]
+_ByteOrder = Literal["little", "big"]
 
 class _UnaryOp:
     def __call__(self) -> IntVar: ...
@@ -39,7 +39,7 @@ class IntBase:
 
     _impl: _CtypesInt
 
-    def __init__(self, v: SupportsInt): ...
+    def __init__(self, x: SupportsInt): ...
     def __int__(self) -> int: ...
 
     __neg__: _UnaryOp
@@ -81,9 +81,9 @@ class IntBase:
     def from_bytes(
         cls,
         data: Union[Iterable[SupportsInt], SupportsBytes],
-        byteorder: ByteOrder = "little",
+        byteorder: Optional[_ByteOrder] = None,
     ): ...
-    def to_bytes(self, byteorder: ByteOrder = "little") -> bytes: ...
+    def to_bytes(self, byteorder: Optional[_ByteOrder] = None) -> bytes: ...
 
 class Int8(IntBase): ...
 class Int16(IntBase): ...
