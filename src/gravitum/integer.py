@@ -1,8 +1,44 @@
 import ctypes
 import re
-from typing import Type
+import sys
+from ctypes import (
+    c_int8,
+    c_int16,
+    c_int32,
+    c_int64,
+    c_uint8,
+    c_uint16,
+    c_uint32,
+    c_uint64,
+)
+from typing import ClassVar, Iterable, SupportsBytes, SupportsInt, Type, Union
 
-from .endian import BYTE_ORDER
+from . import endian
+
+if sys.version_info >= (3, 8):
+    from typing import SupportsIndex
+else:
+    from typing_extensions import SupportsIndex
+
+_CtypesInt = Union[
+    c_int8, c_int16, c_int32, c_int64, c_uint8, c_uint16, c_uint32, c_uint64
+]
+
+
+class _UnaryOp:
+    def __call__(self) -> "IntVar":
+        ...
+
+
+class _BinaryOp:
+    def __call__(self, other: SupportsInt) -> "IntVar":
+        ...
+
+
+class _ComparisonOp:
+    def __call__(self, other: SupportsInt) -> bool:
+        ...
+
 
 # Operation and comparison methods of integer types.
 
@@ -29,6 +65,11 @@ _INT_CMP = ["__gt__", "__ge__", "__eq__", "__le__", "__lt__", "__ne__"]
 
 class IntMeta(type):
     """Metaclass of integer type."""
+
+    _base: Type[_CtypesInt]
+    _size: ClassVar[int]
+    _signed: ClassVar[bool]
+    _impl: _CtypesInt
 
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
@@ -106,39 +147,77 @@ class IntMeta(type):
         return decorator
 
 
-class IntBase:
+class _IntBase:
+    """Type hints of integer type."""
+
+    _base: Type[_CtypesInt]
+    _size: ClassVar[int]
+    _signed: ClassVar[bool]
+    _impl: _CtypesInt
+
+    __neg__: _UnaryOp
+    __pos__: _UnaryOp
+    __abs__: _UnaryOp
+    __add__: _BinaryOp
+    __radd__: _BinaryOp
+    __sub__: _BinaryOp
+    __rsub__: _BinaryOp
+    __mul__: _BinaryOp
+    __rmul__: _BinaryOp
+    __truediv__: _BinaryOp
+    __rtruediv__: _BinaryOp
+    __floordiv__: _BinaryOp
+    __rfloordiv__: _BinaryOp
+    __mod__: _BinaryOp
+    __rmod__: _BinaryOp
+    __invert__: _UnaryOp
+    __and__: _BinaryOp
+    __rand__: _BinaryOp
+    __or__: _BinaryOp
+    __ror__: _BinaryOp
+    __xor__: _BinaryOp
+    __rxor__: _BinaryOp
+    __lshift__: _BinaryOp
+    __rlshift__: _BinaryOp
+    __rshift__: _BinaryOp
+    __rrshift__: _BinaryOp
+    __gt__: _ComparisonOp
+    __ge__: _ComparisonOp
+    __le__: _ComparisonOp
+    __lt__: _ComparisonOp
+
+
+class IntBase(_IntBase):
     """Base class of integer type."""
 
-    def __init__(self, x):
+    def __init__(self, x: SupportsInt):
         self._impl = self._base(int(x))
 
-    def __int__(self):
+    def __int__(self) -> int:
         return int(self._impl.value)
 
     @classmethod
-    def get_size(cls):
+    def get_size(cls) -> int:
         """Get size (bytes) of this type."""
         return cls._size
 
     @classmethod
-    def get_signed(cls):
+    def get_signed(cls) -> bool:
         """Get signed of this type."""
         return cls._signed
 
     @classmethod
-    def from_bytes(cls, data, byteorder=None):
+    def from_bytes(cls, data: Union[Iterable[SupportsIndex], SupportsBytes]):
         """Return a value of this type from given bytes"""
         return cls(
-            int.from_bytes(
-                data, byteorder=byteorder or BYTE_ORDER, signed=cls.get_signed()
-            )
+            int.from_bytes(data, byteorder=endian.BYTE_ORDER, signed=cls.get_signed())
         )
 
-    def to_bytes(self, byteorder=None):
+    def to_bytes(self) -> bytes:
         """Covert this value to bytes."""
         return int(self).to_bytes(
             length=self.get_size(),
-            byteorder=byteorder or BYTE_ORDER,
+            byteorder=endian.BYTE_ORDER,
             signed=self.get_signed(),
         )
 

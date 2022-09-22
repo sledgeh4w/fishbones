@@ -1,6 +1,7 @@
-from . import endian
+from typing import List, SupportsInt, Union
+
 from .exceptions import InvalidOperationError
-from .integer import IntBase, uint8
+from .integer import IntBase, IntType, IntVar, uint8
 from .utils import get_type
 
 
@@ -11,13 +12,16 @@ class VirtualPointer:
         source: The source ``bytearray`` to be read / write.
         data_type: The type of operated data. If it is ``str``, it will use
             ``utils.get_type`` to look up the type.
-        byteorder: The byteorder of operated data.
         offset: The distance from beginning to operating position.
     """
 
-    def __init__(self, source, data_type=uint8, byteorder=None, offset=0):
+    def __init__(
+        self,
+        source: bytearray,
+        data_type: Union[IntType, str] = uint8,
+        offset: int = 0,
+    ):
         self.source = source
-        self.byteorder = byteorder or endian.BYTE_ORDER
         self.offset = offset
         self.data_type = data_type
 
@@ -35,7 +39,7 @@ class VirtualPointer:
         return self._data_type
 
     @data_type.setter
-    def data_type(self, type_or_name):
+    def data_type(self, type_or_name: Union[IntType, str]):
         """Set data type."""
         if isinstance(type_or_name, str):
             try:
@@ -50,7 +54,7 @@ class VirtualPointer:
         else:
             raise TypeError("Invalid type")
 
-    def copy(self):
+    def copy(self) -> "VirtualPointer":
         """Copy this object.
 
         The new object and the old object will operate on the same ``bytearray``.
@@ -58,34 +62,33 @@ class VirtualPointer:
         return self.__class__(
             source=self.source,
             data_type=self.data_type,
-            byteorder=self.byteorder,
             offset=self.offset,
         )
 
-    def add(self, num):
+    def add(self, num: int) -> "VirtualPointer":
         """Offset this pointer position."""
         obj = self.copy()
         obj.offset += num * self.data_type.get_size()
         return obj
 
-    def sub(self, num):
+    def sub(self, num: int) -> "VirtualPointer":
         """Reverse offset this pointer position."""
         return self.add(-num)
 
-    def cast(self, data_type):
+    def cast(self, data_type: Union[IntType, str]) -> "VirtualPointer":
         """Cast to the specified type."""
         obj = self.copy()
         obj.data_type = data_type
         return obj
 
-    def read_bytes(self, size):
+    def read_bytes(self, size: int) -> bytes:
         """Read bytes from source ``bytearray``."""
         if self.offset + size > len(self.source):
             raise InvalidOperationError("Read out of range")
 
         return bytes(self.source[self.offset : self.offset + size])
 
-    def write_bytes(self, data):
+    def write_bytes(self, data: Union[bytes, bytearray, List[SupportsInt]]):
         """Write bytes into source ``bytearray``."""
         try:
             for i, v in enumerate(data):
@@ -94,17 +97,17 @@ class VirtualPointer:
         except IndexError as e:
             raise InvalidOperationError("Write out of range") from e
 
-    def read(self):
+    def read(self) -> IntVar:
         """Read an integer from source ``bytearray``."""
         data = self.read_bytes(self.data_type.get_size())
-        return self.data_type.from_bytes(data, byteorder=self.byteorder)
+        return self.data_type.from_bytes(data)
 
-    def write(self, value):
+    def write(self, value: SupportsInt):
         """Write an integer into source ``bytearray``."""
-        data = self.data_type(value).to_bytes(byteorder=self.byteorder)
+        data = self.data_type(value).to_bytes()
         self.write_bytes(data)
 
 
-def vptr(source, data_type=uint8, byteorder=None):
-    """Shorthand of `VirtualPointer(source, data_type, byteorder)`."""
-    return VirtualPointer(source=source, data_type=data_type, byteorder=byteorder)
+def vptr(source: bytearray, data_type: Union[IntType, str] = uint8) -> VirtualPointer:
+    """Shorthand of `VirtualPointer(source, data_type)`."""
+    return VirtualPointer(source=source, data_type=data_type)
