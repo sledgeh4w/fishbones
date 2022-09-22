@@ -1,5 +1,6 @@
 import re
 
+from . import endian
 from .integer import int8, int16, int32, int64, uint8, uint16, uint32, uint64
 
 
@@ -32,3 +33,8 @@ def get_type(size=None, signed=None, type_name=None):
                 return int_type
 
     raise ValueError("No matched type")
+
+
+def set_endian(little=True):
+    """Set global endian."""
+    endian.BYTE_ORDER = endian.LITTLE_ENDIAN if little else endian.BIG_ENDIAN

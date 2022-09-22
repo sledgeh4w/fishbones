@@ -1,22 +1,10 @@
 """Implement functions which are used in the code decompiled by Ghidra."""
 
-from .ida import truncate, cfadd, ofsub, ofadd
 from ..integer import uint8, uint16, uint32, uint64
-from ..utils import get_type
+from .ida import cfadd, ofadd, ofsub
+from .utils import sign_extend, truncate, zero_extend
 
 # Refer to https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra/Features/Decompiler/src/main/help/help/topics/DecompilePlugin/DecompilerConcepts.html    # noqa: E501
-
-
-def zero_extend(x, to_type):
-    """Zero-extension operator."""
-    return to_type.from_bytes(x.to_bytes())
-
-
-def sign_extend(x, to_type):
-    """Sign-extension operator."""
-    t1 = get_type(size=x.get_size(), signed=True)
-    t2 = get_type(size=to_type.get_size(), signed=True)
-    return to_type.from_bytes(t2.from_bytes(t1(x).to_bytes()).to_bytes())
 
 
 def sub21(x, c):

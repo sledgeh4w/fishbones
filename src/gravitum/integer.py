@@ -2,7 +2,9 @@ import ctypes
 import re
 from typing import Type
 
-# Operation and comparison methods of integer types to be defined.
+from .endian import BYTE_ORDER
+
+# Operation and comparison methods of integer types.
 
 _INT_OP = [
     "__neg__",
@@ -107,8 +109,8 @@ class IntMeta(type):
 class IntBase:
     """Base class of integer type."""
 
-    def __init__(self, v):
-        self._impl = self._base(int(v))
+    def __init__(self, x):
+        self._impl = self._base(int(x))
 
     def __int__(self):
         return int(self._impl.value)
@@ -124,15 +126,19 @@ class IntBase:
         return cls._signed
 
     @classmethod
-    def from_bytes(cls, data, byteorder="little"):
+    def from_bytes(cls, data, byteorder=None):
         """Return a value of this type from given bytes"""
-        return cls(int.from_bytes(data, byteorder=byteorder, signed=cls.get_signed()))
+        return cls(
+            int.from_bytes(
+                data, byteorder=byteorder or BYTE_ORDER, signed=cls.get_signed()
+            )
+        )
 
-    def to_bytes(self, byteorder="little"):
+    def to_bytes(self, byteorder=None):
         """Covert this value to bytes."""
         return int(self).to_bytes(
             length=self.get_size(),
-            byteorder=byteorder,
+            byteorder=byteorder or BYTE_ORDER,
             signed=self.get_signed(),
         )
 

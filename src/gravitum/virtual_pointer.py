@@ -1,3 +1,4 @@
+from . import endian
 from .exceptions import InvalidOperationError
 from .integer import IntBase, uint8
 from .utils import get_type
@@ -14,9 +15,9 @@ class VirtualPointer:
         offset: The distance from beginning to operating position.
     """
 
-    def __init__(self, source, data_type=uint8, byteorder="little", offset=0):
+    def __init__(self, source, data_type=uint8, byteorder=None, offset=0):
         self.source = source
-        self.byteorder = byteorder
+        self.byteorder = byteorder or endian.BYTE_ORDER
         self.offset = offset
         self.data_type = data_type
 
@@ -104,6 +105,6 @@ class VirtualPointer:
         self.write_bytes(data)
 
 
-def vptr(source, data_type=uint8, byteorder="little"):
+def vptr(source, data_type=uint8, byteorder=None):
     """Shorthand of `VirtualPointer(source, data_type, byteorder)`."""
     return VirtualPointer(source=source, data_type=data_type, byteorder=byteorder)

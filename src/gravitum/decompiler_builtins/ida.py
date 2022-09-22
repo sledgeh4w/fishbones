@@ -1,29 +1,11 @@
 """Implement functions which are used in the code decompiled by IDA."""
 
-import sys
-
+from .. import endian
 from ..integer import int8, int16, int32, uint8, uint16, uint32, uint64
 from ..utils import get_type
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
-BIG_ENDIAN: Literal["big"] = "big"
-LITTLE_ENDIAN: Literal["little"] = "little"
-
-# Default use little endian.
-BYTE_ORDER: Literal["big", "little"] = LITTLE_ENDIAN
+from .utils import truncate
 
 # Refer to defs.h of IDA.
-
-
-def truncate(x, c, to_type):
-    """Truncate data."""
-    data = x.to_bytes(byteorder=BYTE_ORDER)
-    to_size = to_type.get_size()
-    return to_type.from_bytes(data[c : c + to_size], byteorder=BYTE_ORDER)
 
 
 def last_ind(x, part_type):
@@ -33,12 +15,12 @@ def last_ind(x, part_type):
 
 def low_ind(x, part_type):
     """Implementation of `LOW_IND`."""
-    return last_ind(x, part_type) if BYTE_ORDER == BIG_ENDIAN else 0
+    return last_ind(x, part_type) if endian.BYTE_ORDER == endian.BIG_ENDIAN else 0
 
 
 def high_ind(x, part_type):
     """Implementation of `HIGH_IND`."""
-    return 0 if BYTE_ORDER == BIG_ENDIAN else last_ind(x, part_type)
+    return 0 if endian.BYTE_ORDER == endian.BIG_ENDIAN else last_ind(x, part_type)
 
 
 def byten(x, n):
@@ -510,25 +492,9 @@ def cfadd(x, y):
 # Refer to https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html.
 
 
-def swap_bytes(x):
-    """Reverse bytes of the value."""
-    data = x.to_bytes(byteorder=BYTE_ORDER)
-    return x.from_bytes(data[::-1], byteorder=BYTE_ORDER)
-
-
-def bswap16(x):
-    """Implementation of `bswap16`."""
-    return swap_bytes(x)
-
-
 def bswap32(x):
     """Implementation of `bswap32`."""
-    return swap_bytes(x)
-
-
-def bswap64(x):
-    """Implementation of `bswap64`."""
-    return swap_bytes(x)
+    return x.from_bytes(x.to_bytes()[::-1])
 
 
 def clz(x):
