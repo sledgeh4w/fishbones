@@ -32,11 +32,9 @@ class _ComparisonOp:
     def __call__(self, other: SupportsInt) -> bool: ...
 
 class IntBase:
-
     _base: Type[_CtypesInt]
     _size: ClassVar[int]
     _signed: ClassVar[bool]
-
     _impl: _CtypesInt
 
     def __init__(self, x: SupportsInt): ...
