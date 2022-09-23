@@ -1,14 +1,7 @@
 import re
-import sys
 from typing import Optional
 
-from . import endian as _endian
 from .integer import IntType, int8, int16, int32, int64, uint8, uint16, uint32, uint64
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 
 def get_type(
@@ -44,8 +37,3 @@ def get_type(
                 return int_type
 
     raise ValueError("No matched type")
-
-
-def set_endian(endian: Literal["little", "big"]):
-    """Set global endian."""
-    _endian.BYTE_ORDER = endian
