@@ -10,9 +10,3 @@ LITTLE_ENDIAN: Literal["little"] = "little"
 
 # Default use little endian.
 BYTE_ORDER: Literal["big", "little"] = LITTLE_ENDIAN
-
-
-def set_endian(endian: Literal["little", "big"]):
-    """Set global endian."""
-    global BYTE_ORDER
-    BYTE_ORDER = endian
