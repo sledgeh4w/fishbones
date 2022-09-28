@@ -1,26 +1,4 @@
-from operator import (
-    neg,
-    pos,
-    abs,
-    invert,
-    add,
-    sub,
-    mul,
-    truediv,
-    floordiv,
-    mod,
-    and_,
-    or_,
-    xor,
-    lshift,
-    rshift,
-    gt,
-    ge,
-    eq,
-    le,
-    lt,
-    ne,
-)
+import operator
 
 import pytest
 
@@ -30,10 +8,10 @@ from gravitum import int8, uint8, uint32
 @pytest.mark.parametrize(
     "x,op,expected",
     [
-        (int8(1), neg, -1),
-        (int8(-1), pos, -1),
+        (int8(1), operator.neg, -1),
+        (int8(-1), operator.pos, -1),
         (int8(-1), abs, 1),
-        (int8(1), invert, -2),
+        (int8(1), operator.invert, -2),
     ],
 )
 def test_unary_operation(x, op, expected):
@@ -45,17 +23,17 @@ def test_unary_operation(x, op, expected):
 @pytest.mark.parametrize(
     "x,y,op,expected",
     [
-        (int8(1), int8(1), add, 2),
-        (int8(2), int8(1), sub, 1),
-        (int8(2), int8(2), mul, 4),
-        (int8(4), int8(2), truediv, 2),
-        (int8(4), int8(2), floordiv, 2),
-        (int8(3), int8(2), mod, 1),
-        (int8(1), int8(2), and_, 0),
-        (int8(1), int8(2), or_, 3),
-        (int8(1), int8(2), xor, 3),
-        (int8(1), int8(1), lshift, 2),
-        (int8(1), int8(1), rshift, 0),
+        (int8(1), int8(1), operator.add, 2),
+        (int8(2), int8(1), operator.sub, 1),
+        (int8(2), int8(2), operator.mul, 4),
+        (int8(4), int8(2), operator.truediv, 2),
+        (int8(4), int8(2), operator.floordiv, 2),
+        (int8(3), int8(2), operator.mod, 1),
+        (int8(1), int8(2), operator.and_, 0),
+        (int8(1), int8(2), operator.or_, 3),
+        (int8(1), int8(2), operator.xor, 3),
+        (int8(1), int8(1), operator.lshift, 2),
+        (int8(1), int8(1), operator.rshift, 0),
     ],
 )
 def test_binary_operation(x, y, op, expected):
@@ -67,18 +45,18 @@ def test_binary_operation(x, y, op, expected):
 @pytest.mark.parametrize(
     "x,y,op,expected",
     [
-        (int8(1), int8(0), gt, True),
-        (int8(1), int8(1), gt, False),
-        (int8(1), int8(1), ge, True),
-        (int8(0), int8(1), ge, False),
-        (int8(1), int8(1), eq, True),
-        (int8(1), int8(0), eq, False),
-        (int8(1), int8(1), le, True),
-        (int8(1), int8(0), le, False),
-        (int8(0), int8(1), lt, True),
-        (int8(1), int8(1), lt, False),
-        (int8(1), int8(0), ne, True),
-        (int8(1), int8(1), ne, False),
+        (int8(1), int8(0), operator.gt, True),
+        (int8(1), int8(1), operator.gt, False),
+        (int8(1), int8(1), operator.ge, True),
+        (int8(0), int8(1), operator.ge, False),
+        (int8(1), int8(1), operator.eq, True),
+        (int8(1), int8(0), operator.eq, False),
+        (int8(1), int8(1), operator.le, True),
+        (int8(1), int8(0), operator.le, False),
+        (int8(0), int8(1), operator.lt, True),
+        (int8(1), int8(1), operator.lt, False),
+        (int8(1), int8(0), operator.ne, True),
+        (int8(1), int8(1), operator.ne, False),
     ],
 )
 def test_comparison(x, y, op, expected):
