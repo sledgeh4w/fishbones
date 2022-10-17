@@ -10,7 +10,7 @@ from gravitum import int8, uint8, uint32
     [
         (int8(1), operator.neg, -1),
         (int8(-1), operator.pos, -1),
-        (int8(-1), abs, 1),
+        (int8(-1), operator.abs, 1),
         (int8(1), operator.invert, -2),
     ],
 )
