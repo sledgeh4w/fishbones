@@ -66,11 +66,6 @@ _INT_CMP = ["__gt__", "__ge__", "__eq__", "__le__", "__lt__", "__ne__"]
 class IntMeta(type):
     """Metaclass of integer type."""
 
-    _base: Type[_CtypesInt]
-    _size: ClassVar[int]
-    _signed: ClassVar[bool]
-    _impl: _CtypesInt
-
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
 
@@ -112,7 +107,7 @@ class IntMeta(type):
             if args:
                 other = args[0]
 
-                if isinstance(other, IntBase):
+                if isinstance(other, Integer):
                     # If their sizes are equal, the type of result is unsigned.
                     if self.get_size() == other.get_size():
                         data_type = type(other if self.get_signed() else self)
@@ -147,13 +142,22 @@ class IntMeta(type):
         return decorator
 
 
-class _IntBase:
-    """Type hints of integer type."""
+class _Integer:
+    """Core part of Integer type."""
 
     _base: Type[_CtypesInt]
     _size: ClassVar[int]
     _signed: ClassVar[bool]
     _impl: _CtypesInt
+
+    def __init__(self, x: SupportsInt):
+        self._impl = self._base(int(x))
+
+    def __int__(self) -> int:
+        return int(self._impl.value)
+
+    def __str__(self) -> str:
+        return str(self.__int__())
 
     __neg__: _UnaryOp
     __pos__: _UnaryOp
@@ -187,14 +191,8 @@ class _IntBase:
     __lt__: _ComparisonOp
 
 
-class IntBase(_IntBase):
+class Integer(_Integer):
     """Base class of integer type."""
-
-    def __init__(self, x: SupportsInt):
-        self._impl = self._base(int(x))
-
-    def __int__(self) -> int:
-        return int(self._impl.value)
 
     @classmethod
     def get_size(cls) -> int:
@@ -222,35 +220,35 @@ class IntBase(_IntBase):
         )
 
 
-class Int8(IntBase, metaclass=IntMeta):
+class Int8(Integer, metaclass=IntMeta):
     """Int8"""
 
 
-class Int16(IntBase, metaclass=IntMeta):
+class Int16(Integer, metaclass=IntMeta):
     """Int16"""
 
 
-class Int32(IntBase, metaclass=IntMeta):
+class Int32(Integer, metaclass=IntMeta):
     """Int32"""
 
 
-class Int64(IntBase, metaclass=IntMeta):
+class Int64(Integer, metaclass=IntMeta):
     """Int64"""
 
 
-class UInt8(IntBase, metaclass=IntMeta):
+class UInt8(Integer, metaclass=IntMeta):
     """UInt8"""
 
 
-class UInt16(IntBase, metaclass=IntMeta):
+class UInt16(Integer, metaclass=IntMeta):
     """UInt16"""
 
 
-class UInt32(IntBase, metaclass=IntMeta):
+class UInt32(Integer, metaclass=IntMeta):
     """UInt32"""
 
 
-class UInt64(IntBase, metaclass=IntMeta):
+class UInt64(Integer, metaclass=IntMeta):
     """UInt64"""
 
 
@@ -264,5 +262,5 @@ uint32 = UInt32
 uint64 = UInt64
 
 # Used as typing
-IntVar = IntBase
+IntVar = Integer
 IntType = Type[IntVar]
