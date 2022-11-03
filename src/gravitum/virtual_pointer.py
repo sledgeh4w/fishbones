@@ -1,7 +1,7 @@
 from typing import List, SupportsInt, Union
 
 from .exceptions import InvalidOperationError
-from .integer import IntBase, IntType, IntVar, uint8
+from .integer import Integer, IntType, IntVar, uint8
 from .utils import get_type
 
 
@@ -48,7 +48,7 @@ class VirtualPointer:
             except ValueError as e:
                 raise InvalidOperationError("Unsupported type") from e
 
-        elif isinstance(type_or_name, type) and issubclass(type_or_name, IntBase):
+        elif isinstance(type_or_name, type) and issubclass(type_or_name, Integer):
             self._data_type = type_or_name
 
         else:
