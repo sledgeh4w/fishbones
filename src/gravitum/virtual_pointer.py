@@ -26,21 +26,17 @@ class VirtualPointer:
         self.data_type = data_type
 
     def __add__(self, other):
-        """Support addition."""
         return self.add(other)
 
     def __sub__(self, other):
-        """Support subtraction."""
         return self.sub(other)
 
     @property
     def data_type(self):
-        """Get data type."""
         return self._data_type
 
     @data_type.setter
     def data_type(self, type_or_name: Union[IntType, str]):
-        """Set data type."""
         if isinstance(type_or_name, str):
             try:
                 self._data_type = get_type(type_name=type_or_name)

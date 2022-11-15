@@ -1,7 +1,20 @@
 import re
-from typing import Optional
+from typing import Optional, Type, TypeVar
 
-from .integer import IntType, int8, int16, int32, int64, uint8, uint16, uint32, uint64
+from .integer import (
+    IntVar,
+    IntType,
+    int8,
+    int16,
+    int32,
+    int64,
+    uint8,
+    uint16,
+    uint32,
+    uint64,
+)
+
+_T = TypeVar("_T", int8, int16, int32, int64, uint8, uint16, uint32, uint64)
 
 
 def get_type(
@@ -37,3 +50,22 @@ def get_type(
                 return int_type
 
     raise ValueError("No matched type")
+
+
+def truncate(x: IntVar, c: int, to_type: Type[_T]) -> _T:
+    """Truncate data."""
+    data = x.to_bytes()
+    to_size = to_type.get_size()
+    return to_type.from_bytes(data[c : c + to_size])
+
+
+def zero_extend(x: IntVar, to_type: Type[_T]) -> _T:
+    """Zero extend."""
+    return to_type.from_bytes(x.to_bytes())
+
+
+def sign_extend(x: IntVar, to_type: Type[_T]) -> _T:
+    """Sign extend."""
+    t1 = get_type(size=x.get_size(), signed=True)
+    t2 = get_type(size=to_type.get_size(), signed=True)
+    return to_type.from_bytes(t2.from_bytes(t1(x).to_bytes()).to_bytes())

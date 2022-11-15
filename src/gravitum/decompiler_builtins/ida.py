@@ -1,7 +1,5 @@
 """Implement functions which are used in the code decompiled by IDA."""
 
-from typing import Type, TypeVar
-
 from .. import endian
 from ..integer import (
     IntType,
@@ -9,24 +7,14 @@ from ..integer import (
     int8,
     int16,
     int32,
-    int64,
     uint8,
     uint16,
     uint32,
     uint64,
 )
-from ..utils import get_type
-
-_T = TypeVar("_T", int8, int16, int32, int64, uint8, uint16, uint32, uint64)
+from ..utils import get_type, truncate
 
 # Refer to defs.h of IDA.
-
-
-def _truncate(x: IntVar, c: int, to_type: Type[_T]) -> _T:
-    """Truncate data."""
-    data = x.to_bytes()
-    to_size = to_type.get_size()
-    return to_type.from_bytes(data[c : c + to_size])
 
 
 def last_ind(x: IntVar, part_type: IntType) -> int:
@@ -46,17 +34,17 @@ def high_ind(x: IntVar, part_type: IntType) -> int:
 
 def byten(x: IntVar, n: int) -> uint8:
     """Implementation of `BYTEn`."""
-    return _truncate(x, n * 1, uint8)
+    return truncate(x, n * 1, uint8)
 
 
 def wordn(x: IntVar, n: int) -> uint16:
     """Implementation of `WORDn`."""
-    return _truncate(x, n * 2, uint16)
+    return truncate(x, n * 2, uint16)
 
 
 def dwordn(x: IntVar, n: int) -> uint32:
     """Implementation of `DWORDn`."""
-    return _truncate(x, n * 4, uint32)
+    return truncate(x, n * 4, uint32)
 
 
 def lobyte(x: IntVar) -> uint8:
@@ -216,17 +204,17 @@ def dword3(x: IntVar) -> uint32:
 
 def sbyten(x: IntVar, n: int) -> int8:
     """Implementation of `SBYTEn`."""
-    return _truncate(x, n * 1, int8)
+    return truncate(x, n * 1, int8)
 
 
 def swordn(x: IntVar, n: int) -> int16:
     """Implementation of `SWORDn`."""
-    return _truncate(x, n * 2, int16)
+    return truncate(x, n * 2, int16)
 
 
 def sdwordn(x: IntVar, n: int) -> int32:
     """Implementation of `SDWORDn`."""
-    return _truncate(x, n * 4, int32)
+    return truncate(x, n * 4, int32)
 
 
 def slobyte(x: IntVar) -> int8:
