@@ -136,6 +136,9 @@ class IntMeta(type):
         """Build comparison method."""
 
         def decorator(self, other):
+            if not hasattr(other, "__int__"):
+                return False
+
             func = getattr(int, func_name)
             return func(self._impl.value, int(other))
 
