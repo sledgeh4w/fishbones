@@ -31,6 +31,16 @@ class VirtualPointer:
     def __sub__(self, other):
         return self.sub(other)
 
+    def __eq__(self, other):
+        if not isinstance(other, VirtualPointer):
+            return False
+
+        return (
+            self.source == other.source
+            and self.offset == other.offset
+            and self.data_type == other.data_type
+        )
+
     @property
     def data_type(self):
         return self._data_type
