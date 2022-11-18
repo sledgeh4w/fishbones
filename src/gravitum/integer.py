@@ -145,8 +145,8 @@ class IntMeta(type):
         return decorator
 
 
-class _Integer:
-    """Core part of Integer type."""
+class Integer:
+    """Base class of integer type."""
 
     _base: Type[_CtypesInt]
     _size: ClassVar[int]
@@ -192,10 +192,6 @@ class _Integer:
     __ge__: _ComparisonOp
     __le__: _ComparisonOp
     __lt__: _ComparisonOp
-
-
-class Integer(_Integer):
-    """Base class of integer type."""
 
     @classmethod
     def get_size(cls) -> int:
