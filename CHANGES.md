@@ -1,3 +1,11 @@
+## v0.2.1
+
+Released: 2022-11-21
+
+- Add ``__str__`` method for ``Integer``.
+- Add ``__eq__`` method for ``VirtualPointer``.
+- Fix error when ``Integer`` compare with a type without ``__int__`` method.
+
 ## v0.2.0
 
 Released: 2022-10-17
@@ -8,4 +16,4 @@ Released: 2022-10-17
 
 Released: 2022-09-05
 
-- Refactor integer types.
+- Refactor ``Integer`` class.
