@@ -1,7 +1,7 @@
 import pytest
 
-from gravitum import uint16, uint32, uint64
-from gravitum.decompiler_builtins.ghidra import sub42, zext24, sext48
+from fishbones import uint16, uint32, uint64
+from fishbones.decompiler_builtins.ghidra import sub42, zext24, sext48
 
 
 @pytest.mark.parametrize(

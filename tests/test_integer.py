@@ -2,7 +2,7 @@ import operator
 
 import pytest
 
-from gravitum import int8, uint8, uint32
+from fishbones import int8, uint8, uint32
 
 
 @pytest.mark.parametrize(
