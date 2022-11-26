@@ -1,9 +1,9 @@
 # Fishbones
 
-[![build](https://github.com/Sh4ww/gravitum/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Sh4ww/gravitum/actions/workflows/tests.yml)
-![PyPI](https://img.shields.io/pypi/v/gravitum)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/gravitum)
-[![GitHub license](https://img.shields.io/github/license/Sh4ww/gravitum)](https://github.com/Sh4ww/gravitum/blob/main/LICENSE)
+[![build](https://github.com/sh4w1/fishbones/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/sh4w1/fishbones/actions/workflows/tests.yml)
+![PyPI](https://img.shields.io/pypi/v/fishbones)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fishbones)
+[![GitHub license](https://img.shields.io/github/license/sh4w1/fishbones)](https://github.com/sh4w1/fishbones/blob/main/LICENSE)
 
 Fishbones is a library for implementing decompiled code with Python.
 
