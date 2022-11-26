@@ -1,7 +1,7 @@
 import pytest
 
-from gravitum import uint32
-from gravitum.decompiler_builtins.ida import (
+from fishbones import uint32
+from fishbones.decompiler_builtins.ida import (
     byten,
     sbyten,
     rol4,

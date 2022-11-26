@@ -1,3 +1,9 @@
+## v0.3.0
+
+Released: 2022-11-26
+
+- Rename project to Fishbones.
+
 ## v0.2.1
 
 Released: 2022-11-21
