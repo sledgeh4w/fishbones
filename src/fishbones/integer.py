@@ -26,18 +26,18 @@ _CtypesInt = Union[
 
 
 class _UnaryOp:
-    def __call__(self) -> "IntVar":
-        ...
+    def __call__(self) -> "Integer":
+        pass
 
 
 class _BinaryOp:
-    def __call__(self, other: SupportsInt) -> "IntVar":
-        ...
+    def __call__(self, other: SupportsInt) -> "Integer":
+        pass
 
 
 class _ComparisonOp:
     def __call__(self, other: SupportsInt) -> bool:
-        ...
+        pass
 
 
 # Operation and comparison methods of integer types.
@@ -251,15 +251,41 @@ class UInt64(Integer, metaclass=IntMeta):
     """UInt64"""
 
 
-int8 = Int8
-int16 = Int16
-int32 = Int32
-int64 = Int64
-uint8 = UInt8
-uint16 = UInt16
-uint32 = UInt32
-uint64 = UInt64
+def int8(x: SupportsInt) -> Int8:
+    """Shorthand for `Int8(x)`."""
+    return Int8(x)
 
-# Used as typing
-IntVar = Integer
-IntType = Type[IntVar]
+
+def int16(x: SupportsInt) -> Int16:
+    """Shorthand for `Int16(x)`."""
+    return Int16(x)
+
+
+def int32(x: SupportsInt) -> Int32:
+    """Shorthand for `Int32(x)`."""
+    return Int32(x)
+
+
+def int64(x: SupportsInt) -> Int64:
+    """Shorthand for `Int64(x)`."""
+    return Int64(x)
+
+
+def uint8(x: SupportsInt) -> UInt8:
+    """Shorthand for `UInt8(x)`."""
+    return UInt8(x)
+
+
+def uint16(x: SupportsInt) -> UInt16:
+    """Shorthand for `UInt16(x)`."""
+    return UInt16(x)
+
+
+def uint32(x: SupportsInt) -> UInt32:
+    """Shorthand for `UInt32(x)`."""
+    return UInt32(x)
+
+
+def uint64(x: SupportsInt) -> UInt64:
+    """Shorthand for `UInt64(x)`."""
+    return UInt64(x)
