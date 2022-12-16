@@ -1,12 +1,13 @@
 import pytest
 
-from fishbones import vptr, int8, int16, int32, int64, uint8, uint16, uint32, uint64
+from fishbones import vptr
+from fishbones.integer import Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64
 
 
 @pytest.mark.parametrize(
     "source_data,read_offset,read_type,expected",
     [
-        (bytearray([71, 114, 97, 118, 105, 116, 117, 109]), 4, uint8, 105),
+        (bytearray([71, 114, 97, 118, 105, 116, 117, 109]), 4, UInt8, 105),
     ],
 )
 def test_read(source_data, read_offset, read_type, expected):
@@ -22,7 +23,7 @@ def test_read(source_data, read_offset, read_type, expected):
         (
             bytearray([71, 114, 97, 118, 105, 116, 117, 109]),
             2,
-            uint32(0x53683477),
+            UInt32(0x53683477),
             bytearray([71, 114, 119, 52, 104, 83, 117, 109]),
         ),
     ],
@@ -85,14 +86,14 @@ def test_write_bytes(source_data, write_offset, write_data, expected):
 @pytest.mark.parametrize(
     "type_or_name",
     [
-        int8,
-        int16,
-        int32,
-        int64,
-        uint8,
-        uint16,
-        uint32,
-        uint64,
+        Int8,
+        Int16,
+        Int32,
+        Int64,
+        UInt8,
+        UInt16,
+        UInt32,
+        UInt64,
         "int8",
         "int16",
         "int32",

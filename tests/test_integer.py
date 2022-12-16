@@ -3,6 +3,7 @@ import operator
 import pytest
 
 from fishbones import int8, uint8, uint32
+from fishbones.integer import UInt8, UInt32
 
 
 @pytest.mark.parametrize(
@@ -68,9 +69,9 @@ def test_comparison(x, y, op, expected):
 @pytest.mark.parametrize(
     "x,y,expected",
     [
-        (int8(1), uint8(1), uint8),
-        (uint8(1), 1, uint8),
-        (uint8(1), uint32(1), uint32),
+        (int8(1), uint8(1), UInt8),
+        (uint8(1), 1, UInt8),
+        (uint8(1), uint32(1), UInt32),
     ],
 )
 def test_type_conversion(x, y, expected):
