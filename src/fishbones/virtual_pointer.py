@@ -2,7 +2,6 @@ from typing import List, SupportsInt, Type, Union
 
 from .exceptions import InvalidOperationError
 from .integer import Integer, UInt8
-from .utils import get_type
 
 
 class VirtualPointer:
@@ -49,7 +48,7 @@ class VirtualPointer:
     def data_type(self, type_or_name: Union[Type[Integer], str]):
         if isinstance(type_or_name, str):
             try:
-                self._data_type = get_type(type_name=type_or_name)
+                self._data_type = Integer.get_type(type_name=type_or_name)
 
             except ValueError as e:
                 raise InvalidOperationError("Unsupported type") from e

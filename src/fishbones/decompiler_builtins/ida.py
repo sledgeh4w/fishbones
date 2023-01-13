@@ -1,12 +1,34 @@
 """Implement functions which are used in the code decompiled by IDA."""
 
-from typing import Type
+from typing import Type, TypeVar
 
 from .. import endian
-from ..integer import Int8, Int16, Int32, Integer, UInt8, UInt16, UInt32, UInt64
-from ..utils import get_type, truncate
+from ..integer import Int8, Int16, Int32, Int64, Integer, UInt8, UInt16, UInt32, UInt64
+
+
+_T = TypeVar("_T", Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
+
 
 # Refer to defs.h of IDA.
+
+
+def truncate(x: Integer, c: int, to_type: Type[_T]) -> _T:
+    """Truncate data."""
+    data = x.to_bytes()
+    to_size = to_type.get_size()
+    return to_type.from_bytes(data[c : c + to_size])
+
+
+def zero_extend(x: Integer, to_type: Type[_T]) -> _T:
+    """Zero extend."""
+    return to_type.from_bytes(x.to_bytes())
+
+
+def sign_extend(x: Integer, to_type: Type[_T]) -> _T:
+    """Sign extend."""
+    t1 = Integer.get_type(size=x.get_size(), signed=True)
+    t2 = Integer.get_type(size=to_type.get_size(), signed=True)
+    return to_type.from_bytes(t2.from_bytes(t1(x).to_bytes()).to_bytes())
 
 
 def last_ind(x: Integer, part_type: Type[Integer]) -> int:
@@ -368,7 +390,7 @@ def pair(high: Integer, low: Integer) -> Integer:
     """Implementation of `__PAIR__`."""
     size = high.get_size()
     signed = high.get_signed()
-    int_type = get_type(size=size * 2, signed=signed)
+    int_type = Integer.get_type(size=size * 2, signed=signed)
     return int_type(high) << size * 8 | type(high)(low)
 
 
@@ -448,7 +470,7 @@ def mkcshr(value: Integer, count: int) -> int:
 
 def sets(x: Integer) -> int:
     """Implementation of `__SETS__`."""
-    data_type = get_type(size=x.get_size(), signed=True)
+    data_type = Integer.get_type(size=x.get_size(), signed=True)
     return int(data_type(x) < 0)
 
 
@@ -479,14 +501,14 @@ def ofadd(x: Integer, y: Integer) -> int:
 def cfsub(x: Integer, y: Integer) -> int:
     """Implementation of `__CFSUB__`."""
     size = max(x.get_size(), y.get_size())
-    data_type = get_type(size=size, signed=False)
+    data_type = Integer.get_type(size=size, signed=False)
     return int(data_type(x) < data_type(y))
 
 
 def cfadd(x: Integer, y: Integer) -> int:
     """Implementation of `__CFADD__`."""
     size = max(x.get_size(), y.get_size())
-    data_type = get_type(size=size, signed=False)
+    data_type = Integer.get_type(size=size, signed=False)
     return int(data_type(x) > data_type(x + y))
 
 

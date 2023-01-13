@@ -1,8 +1,7 @@
 """Implement functions which are used in the code decompiled by Ghidra."""
 
 from ..integer import Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64
-from ..utils import sign_extend, truncate, zero_extend
-from .ida import cfadd, ofadd, ofsub
+from .ida import truncate, zero_extend, sign_extend, ofsub, ofadd, cfadd
 
 # Refer to https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra/Features/Decompiler/src/main/help/help/topics/DecompilePlugin/DecompilerConcepts.html    # noqa: E501
 
