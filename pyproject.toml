@@ -27,6 +27,10 @@ dynamic = ["version"]
 [tool.setuptools.dynamic]
 version = { attr = "fishbones.__version__" }
 
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["fishbones*"]
+
 [tool.mypy]
 files = ["src/fishbones"]
 python_version = "3.6"
