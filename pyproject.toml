@@ -1,14 +1,11 @@
-[build-system]
-requires = ["setuptools>=42"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "fishbones"
+version = "0.3.0"
 description = "Library for implementing decompiled code."
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 authors = [
-    { name = "Sh4w", email = "sh4w0911@gmail.com" },
+    "Sh4w <sh4w0911@gmail.com>",
 ]
 classifiers = [
     "License :: OSI Approved :: MIT License",
@@ -21,15 +18,16 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-requires-python = ">=3.6"
-dynamic = ["version"]
+packages = [
+    { include = "fishbones", from = "src" },
+]
 
-[tool.setuptools.dynamic]
-version = { attr = "fishbones.__version__" }
+[tool.poetry.dependencies]
+python = "^3.6"
 
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["fishbones*"]
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.mypy]
 files = ["src/fishbones"]
