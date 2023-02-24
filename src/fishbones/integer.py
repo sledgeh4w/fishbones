@@ -26,12 +26,12 @@ _CtypesInt = Union[
 
 
 class _UnaryOp:
-    def __call__(self) -> "Integer":
+    def __call__(self) -> "Int":
         pass
 
 
 class _BinaryOp:
-    def __call__(self, other: SupportsInt) -> "Integer":
+    def __call__(self, other: SupportsInt) -> "Int":
         pass
 
 
@@ -40,27 +40,11 @@ class _ComparisonOp:
         pass
 
 
-# Operation and comparison methods of integer types.
-
-_INT_OP = [
-    "__neg__",
-    "__pos__",
-    "__abs__",
-    "__add__",
-    "__sub__",
-    "__mul__",
-    "__truediv__",
-    "__floordiv__",
-    "__mod__",
-    "__invert__",
-    "__and__",
-    "__or__",
-    "__xor__",
-    "__lshift__",
-    "__rshift__",
-]
-
-_INT_CMP = ["__gt__", "__ge__", "__eq__", "__le__", "__lt__", "__ne__"]
+_VALID_UNARY_OPERATION = re.compile(r"__(neg|pos|abs|invert)__")
+_VALID_BINARY_OPERATION = re.compile(
+    r"__r*(add|sub|mul|truediv|floordiv|mod|and|or|xor|lshift|rshift)__"
+)
+_VALID_COMPARISON = re.compile(r"__(gt|ge|eq|le|lt|ne)__")
 
 
 class IntMeta(type):
@@ -69,45 +53,54 @@ class IntMeta(type):
     def __init__(cls, name, bases, attr_dict):
         super().__init__(name, bases, attr_dict)
 
-        base = getattr(ctypes, "c_%s" % cls.__name__.lower())
-        setattr(cls, "_base", base)
+        cls_name = cls.__name__
 
-        size = int(re.match(r"(U*)Int(\d+)", cls.__name__).group(2)) // 8
-        setattr(cls, "_size", size)
+        setattr(cls, "_cls", getattr(ctypes, "c_%s" % cls_name.lower()))
+        setattr(cls, "_size", int(re.match(r"(U*)Int(\d+)", cls_name).group(2)) // 8)
+        setattr(cls, "_signed", bool(re.match(r"Int\d+", cls_name)))
 
-        signed = bool(re.match(r"Int\d+", cls.__name__))
-        setattr(cls, "_signed", signed)
+        for name in dir(int):
+            if any(
+                (
+                    valid.fullmatch(name)
+                    for valid in [_VALID_UNARY_OPERATION, _VALID_BINARY_OPERATION]
+                )
+            ):
+                value = cls._build_operation(name)
 
-        for op in _INT_OP:
-            setattr(cls, op, cls._build_operation(op))
+            elif _VALID_COMPARISON.fullmatch(name):
+                value = cls._build_comparison(name)
 
-        for cmp in _INT_CMP:
-            setattr(cls, cmp, cls._build_comparison(cmp))
+            else:
+                value = None
+
+            if value:
+                setattr(cls, name, value)
 
     @staticmethod
     def _build_operation(func_name):
         """Build operation method.
 
         If it is a unary operation, the result is still the own type.
-        If the type of another operand is ``Integer`` and is inconsistent with
-        the own type, they result will be converted to larger size or unsigned type.
+        If the type of another operand is ``Int`` and is inconsistent with the
+        own type, they result will be converted to larger size or unsigned type.
         If another operand is ``int`` or can be converted to ``int``, the result
         will be converted to the own type.
         """
 
+        try:
+            operator = getattr(int, func_name)
+        except AttributeError:
+            return None
+
         def decorator(self, *args):
             data_type = type(self)
-
-            try:
-                operator = getattr(int, func_name)
-            except AttributeError:
-                return NotImplemented
 
             # If a binary operation
             if args:
                 other = args[0]
 
-                if isinstance(other, Integer):
+                if isinstance(other, Int):
                     # If their sizes are equal, the type of result is unsigned.
                     if self.get_size() == other.get_size():
                         data_type = type(other if self.get_signed() else self)
@@ -145,22 +138,14 @@ class IntMeta(type):
         return decorator
 
 
-class Integer:
-    """Base class of integer type."""
+class _Int:
+    """Type hint for integer type."""
 
-    _base: Type[_CtypesInt]
     _size: ClassVar[int]
     _signed: ClassVar[bool]
+
+    _cls: Type[_CtypesInt]
     _impl: _CtypesInt
-
-    def __init__(self, x: SupportsInt):
-        self._impl = self._base(int(x))
-
-    def __int__(self) -> int:
-        return int(self._impl.value)
-
-    def __str__(self) -> str:
-        return str(self.__int__())
 
     __neg__: _UnaryOp
     __pos__: _UnaryOp
@@ -193,6 +178,24 @@ class Integer:
     __le__: _ComparisonOp
     __lt__: _ComparisonOp
 
+
+class Int(_Int):
+    """Base class of integer type."""
+
+    def __init__(self, x: SupportsInt):
+        if not getattr(self, "_cls"):
+            raise TypeError(
+                "This class is only used for inheritance, don't instantiate it"
+            )
+
+        self._impl = self._cls(int(x))
+
+    def __int__(self) -> int:
+        return int(self._impl.value)
+
+    def __str__(self) -> str:
+        return str(self.__int__())
+
     @classmethod
     def get_size(cls) -> int:
         """Get size (bytes) of this type."""
@@ -223,7 +226,7 @@ class Integer:
         size: Optional[int] = None,
         signed: Optional[bool] = None,
         type_name: Optional[str] = None,
-    ) -> Type["Integer"]:
+    ) -> Type["Int"]:
         """Get type integer with specified size and signed.
 
         Args:
@@ -254,35 +257,35 @@ class Integer:
         raise ValueError("No matched type")
 
 
-class Int8(Integer, metaclass=IntMeta):
+class Int8(Int, metaclass=IntMeta):
     """Int8"""
 
 
-class Int16(Integer, metaclass=IntMeta):
+class Int16(Int, metaclass=IntMeta):
     """Int16"""
 
 
-class Int32(Integer, metaclass=IntMeta):
+class Int32(Int, metaclass=IntMeta):
     """Int32"""
 
 
-class Int64(Integer, metaclass=IntMeta):
+class Int64(Int, metaclass=IntMeta):
     """Int64"""
 
 
-class UInt8(Integer, metaclass=IntMeta):
+class UInt8(Int, metaclass=IntMeta):
     """UInt8"""
 
 
-class UInt16(Integer, metaclass=IntMeta):
+class UInt16(Int, metaclass=IntMeta):
     """UInt16"""
 
 
-class UInt32(Integer, metaclass=IntMeta):
+class UInt32(Int, metaclass=IntMeta):
     """UInt32"""
 
 
-class UInt64(Integer, metaclass=IntMeta):
+class UInt64(Int, metaclass=IntMeta):
     """UInt64"""
 
 
