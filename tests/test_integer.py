@@ -9,14 +9,14 @@ from fishbones.integer import UInt8, UInt32
 @pytest.mark.parametrize(
     "x,op,expected",
     [
-        (int8(1), operator.neg, -1),
-        (int8(-1), operator.pos, -1),
-        (int8(-1), operator.abs, 1),
-        (int8(1), operator.invert, -2),
+        (1, operator.neg, -1),
+        (-1, operator.pos, -1),
+        (-1, operator.abs, 1),
+        (1, operator.invert, -2),
     ],
 )
 def test_unary_operation(x, op, expected):
-    result = op(x)
+    result = op(int8(x))
 
     assert result == expected
 
@@ -24,46 +24,46 @@ def test_unary_operation(x, op, expected):
 @pytest.mark.parametrize(
     "x,y,op,expected",
     [
-        (int8(1), int8(1), operator.add, 2),
-        (int8(2), int8(1), operator.sub, 1),
-        (int8(2), int8(2), operator.mul, 4),
-        (int8(4), int8(2), operator.truediv, 2),
-        (int8(4), int8(2), operator.floordiv, 2),
-        (int8(3), int8(2), operator.mod, 1),
-        (int8(1), int8(2), operator.and_, 0),
-        (int8(1), int8(2), operator.or_, 3),
-        (int8(1), int8(2), operator.xor, 3),
-        (int8(1), int8(1), operator.lshift, 2),
-        (int8(1), int8(1), operator.rshift, 0),
+        (1, 1, operator.add, 2),
+        (2, 1, operator.sub, 1),
+        (2, 2, operator.mul, 4),
+        (4, 2, operator.truediv, 2),
+        (4, 2, operator.floordiv, 2),
+        (3, 2, operator.mod, 1),
+        (1, 2, operator.and_, 0),
+        (1, 2, operator.or_, 3),
+        (1, 2, operator.xor, 3),
+        (1, 1, operator.lshift, 2),
+        (1, 1, operator.rshift, 0),
     ],
 )
 def test_binary_operation(x, y, op, expected):
-    result = op(x, y)
+    results = [op(int8(x), int8(y)), op(int8(x), y), op(x, int8(y))]
 
-    assert result == expected
+    assert all([result == expected for result in results])
 
 
 @pytest.mark.parametrize(
     "x,y,op,expected",
     [
-        (int8(1), int8(0), operator.gt, True),
-        (int8(1), int8(1), operator.gt, False),
-        (int8(1), int8(1), operator.ge, True),
-        (int8(0), int8(1), operator.ge, False),
-        (int8(1), int8(1), operator.eq, True),
-        (int8(1), int8(0), operator.eq, False),
-        (int8(1), int8(1), operator.le, True),
-        (int8(1), int8(0), operator.le, False),
-        (int8(0), int8(1), operator.lt, True),
-        (int8(1), int8(1), operator.lt, False),
-        (int8(1), int8(0), operator.ne, True),
-        (int8(1), int8(1), operator.ne, False),
+        (1, 0, operator.gt, True),
+        (1, 1, operator.gt, False),
+        (1, 1, operator.ge, True),
+        (0, 1, operator.ge, False),
+        (1, 1, operator.eq, True),
+        (1, 0, operator.eq, False),
+        (1, 1, operator.le, True),
+        (1, 0, operator.le, False),
+        (0, 1, operator.lt, True),
+        (1, 1, operator.lt, False),
+        (1, 0, operator.ne, True),
+        (1, 1, operator.ne, False),
     ],
 )
 def test_comparison(x, y, op, expected):
-    result = op(x, y)
+    results = [op(int8(x), int8(y)), op(int8(x), y), op(x, int8(y))]
 
-    assert result == expected
+    assert all([result == expected for result in results])
 
 
 @pytest.mark.parametrize(
