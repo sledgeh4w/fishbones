@@ -11,7 +11,16 @@ from ctypes import (
     c_uint32,
     c_uint64,
 )
-from typing import ClassVar, Iterable, Optional, SupportsBytes, SupportsInt, Type, Union
+from typing import (
+    ClassVar,
+    Iterable,
+    Optional,
+    SupportsBytes,
+    SupportsInt,
+    Type,
+    Union,
+    get_type_hints,
+)
 
 from . import endian
 
@@ -40,13 +49,6 @@ class _ComparisonOp:
         pass
 
 
-_VALID_UNARY_OPERATION = re.compile(r"__(neg|pos|abs|invert)__")
-_VALID_BINARY_OPERATION = re.compile(
-    r"__r*(add|sub|mul|truediv|floordiv|mod|and|or|xor|lshift|rshift)__"
-)
-_VALID_COMPARISON = re.compile(r"__(gt|ge|eq|le|lt|ne)__")
-
-
 class IntMeta(type):
     """Metaclass of integer type."""
 
@@ -59,23 +61,15 @@ class IntMeta(type):
         setattr(cls, "_size", int(re.match(r"(U*)Int(\d+)", cls_name).group(2)) // 8)
         setattr(cls, "_signed", bool(re.match(r"Int\d+", cls_name)))
 
-        for name in dir(int):
-            if any(
-                (
-                    valid.fullmatch(name)
-                    for valid in [_VALID_UNARY_OPERATION, _VALID_BINARY_OPERATION]
-                )
-            ):
-                value = cls._build_operation(name)
+        for name, t_hint in get_type_hints(_Int).items():
+            if t_hint in (_BinaryOp, _UnaryOp):
+                setattr(cls, name, cls._build_operation(name))
 
-            elif _VALID_COMPARISON.fullmatch(name):
-                value = cls._build_comparison(name)
+            elif t_hint == _ComparisonOp:
+                setattr(cls, name, cls._build_comparison(name))
 
-            else:
-                value = None
-
-            if value:
-                setattr(cls, name, value)
+        for name in ("__eq__", "__ne__"):
+            setattr(cls, name, cls._build_comparison(name))
 
     @staticmethod
     def _build_operation(func_name):
