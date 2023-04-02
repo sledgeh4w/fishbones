@@ -7,6 +7,3 @@ else:
 
 BIG_ENDIAN: Literal["big"] = "big"
 LITTLE_ENDIAN: Literal["little"] = "little"
-
-# Default use little endian.
-BYTE_ORDER: Literal["big", "little"] = LITTLE_ENDIAN

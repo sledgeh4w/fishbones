@@ -22,12 +22,12 @@ from typing import (
     get_type_hints,
 )
 
-from . import endian
+from .consts import LITTLE_ENDIAN
 
 if sys.version_info >= (3, 8):
-    from typing import SupportsIndex
+    from typing import Literal, SupportsIndex
 else:
-    from typing_extensions import SupportsIndex
+    from typing_extensions import Literal, SupportsIndex
 
 _CtypesInt = Union[
     c_int8, c_int16, c_int32, c_int64, c_uint8, c_uint16, c_uint32, c_uint64
@@ -35,12 +35,12 @@ _CtypesInt = Union[
 
 
 class _UnaryOp:
-    def __call__(self) -> "Int":
+    def __call__(self) -> "Integer":
         pass
 
 
 class _BinaryOp:
-    def __call__(self, other: SupportsInt) -> "Int":
+    def __call__(self, other: SupportsInt) -> "Integer":
         pass
 
 
@@ -61,7 +61,7 @@ class IntMeta(type):
         setattr(cls, "_size", int(re.match(r"(U*)Int(\d+)", cls_name).group(2)) // 8)
         setattr(cls, "_signed", bool(re.match(r"Int\d+", cls_name)))
 
-        for name, t_hint in get_type_hints(_Int).items():
+        for name, t_hint in get_type_hints(_Integer).items():
             if t_hint in (_BinaryOp, _UnaryOp):
                 setattr(cls, name, cls._build_operation(name))
 
@@ -94,7 +94,7 @@ class IntMeta(type):
             if args:
                 other = args[0]
 
-                if isinstance(other, Int):
+                if isinstance(other, Integer):
                     # If their sizes are equal, the type of result is unsigned.
                     if self.get_size() == other.get_size():
                         data_type = type(other if self.get_signed() else self)
@@ -132,7 +132,7 @@ class IntMeta(type):
         return decorator
 
 
-class _Int:
+class _Integer:
     """Type hint for integer type."""
 
     _size: ClassVar[int]
@@ -173,7 +173,7 @@ class _Int:
     __lt__: _ComparisonOp
 
 
-class Int(_Int):
+class Integer(_Integer):
     """Base class of integer type."""
 
     def __init__(self, x: SupportsInt):
@@ -201,17 +201,19 @@ class Int(_Int):
         return cls._signed
 
     @classmethod
-    def from_bytes(cls, data: Union[Iterable[SupportsIndex], SupportsBytes]):
+    def from_bytes(
+        cls,
+        data: Union[Iterable[SupportsIndex], SupportsBytes],
+        byteorder: Literal["big", "little"] = LITTLE_ENDIAN,
+    ):
         """Return a value of this type from given bytes"""
-        return cls(
-            int.from_bytes(data, byteorder=endian.BYTE_ORDER, signed=cls.get_signed())
-        )
+        return cls(int.from_bytes(data, byteorder=byteorder, signed=cls.get_signed()))
 
-    def to_bytes(self) -> bytes:
+    def to_bytes(self, byteorder: Literal["big", "little"] = LITTLE_ENDIAN) -> bytes:
         """Covert this value to bytes."""
         return int(self).to_bytes(
             length=self.get_size(),
-            byteorder=endian.BYTE_ORDER,
+            byteorder=byteorder,
             signed=self.get_signed(),
         )
 
@@ -220,7 +222,7 @@ class Int(_Int):
         size: Optional[int] = None,
         signed: Optional[bool] = None,
         type_name: Optional[str] = None,
-    ) -> Type["Int"]:
+    ) -> Type["Integer"]:
         """Get type integer with specified size and signed.
 
         Args:
@@ -251,35 +253,35 @@ class Int(_Int):
         raise ValueError("No matched type")
 
 
-class Int8(Int, metaclass=IntMeta):
+class Int8(Integer, metaclass=IntMeta):
     """Int8"""
 
 
-class Int16(Int, metaclass=IntMeta):
+class Int16(Integer, metaclass=IntMeta):
     """Int16"""
 
 
-class Int32(Int, metaclass=IntMeta):
+class Int32(Integer, metaclass=IntMeta):
     """Int32"""
 
 
-class Int64(Int, metaclass=IntMeta):
+class Int64(Integer, metaclass=IntMeta):
     """Int64"""
 
 
-class UInt8(Int, metaclass=IntMeta):
+class UInt8(Integer, metaclass=IntMeta):
     """UInt8"""
 
 
-class UInt16(Int, metaclass=IntMeta):
+class UInt16(Integer, metaclass=IntMeta):
     """UInt16"""
 
 
-class UInt32(Int, metaclass=IntMeta):
+class UInt32(Integer, metaclass=IntMeta):
     """UInt32"""
 
 
-class UInt64(Int, metaclass=IntMeta):
+class UInt64(Integer, metaclass=IntMeta):
     """UInt64"""
 
 
