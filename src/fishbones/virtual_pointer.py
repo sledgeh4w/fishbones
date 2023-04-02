@@ -1,7 +1,14 @@
+import sys
 from typing import List, SupportsInt, Type, Union
 
+from .consts import LITTLE_ENDIAN
 from .exceptions import InvalidOperationError
-from .integer import Int, UInt8
+from .integer import Integer, UInt8
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 
 class VirtualPointer:
@@ -17,7 +24,7 @@ class VirtualPointer:
     def __init__(
         self,
         source: bytearray,
-        data_type: Union[Type[Int], str] = UInt8,
+        data_type: Union[Type[Integer], str] = UInt8,
         offset: int = 0,
     ):
         self.source = source
@@ -45,15 +52,15 @@ class VirtualPointer:
         return self._data_type
 
     @data_type.setter
-    def data_type(self, type_or_name: Union[Type[Int], str]):
+    def data_type(self, type_or_name: Union[Type[Integer], str]):
         if isinstance(type_or_name, str):
             try:
-                self._data_type = Int.get_type(type_name=type_or_name)
+                self._data_type = Integer.get_type(type_name=type_or_name)
 
             except ValueError as e:
                 raise InvalidOperationError("Unsupported type") from e
 
-        elif isinstance(type_or_name, type) and issubclass(type_or_name, Int):
+        elif isinstance(type_or_name, type) and issubclass(type_or_name, Integer):
             self._data_type = type_or_name
 
         else:
@@ -80,7 +87,7 @@ class VirtualPointer:
         """Reverse offset this pointer position."""
         return self.add(-num)
 
-    def cast(self, data_type: Union[Type[Int], str]) -> "VirtualPointer":
+    def cast(self, data_type: Union[Type[Integer], str]) -> "VirtualPointer":
         """Cast to the specified type."""
         obj = self.copy()
         obj.data_type = data_type
@@ -102,17 +109,21 @@ class VirtualPointer:
         except IndexError as e:
             raise InvalidOperationError("Write out of range") from e
 
-    def read(self) -> Int:
+    def read(self, byteorder: Literal["big", "little"] = LITTLE_ENDIAN) -> Integer:
         """Read an integer from source ``bytearray``."""
         data = self.read_bytes(self.data_type.get_size())
-        return self.data_type.from_bytes(data)
+        return self.data_type.from_bytes(data, byteorder=byteorder)
 
-    def write(self, value: SupportsInt):
+    def write(
+        self, value: SupportsInt, byteorder: Literal["big", "little"] = LITTLE_ENDIAN
+    ):
         """Write an integer into source ``bytearray``."""
-        data = self.data_type(value).to_bytes()
+        data = self.data_type(value).to_bytes(byteorder=byteorder)
         self.write_bytes(data)
 
 
-def vptr(source: bytearray, data_type: Union[Type[Int], str] = UInt8) -> VirtualPointer:
+def vptr(
+    source: bytearray, data_type: Union[Type[Integer], str] = UInt8
+) -> VirtualPointer:
     """Shorthand for `VirtualPointer(source, data_type)`."""
     return VirtualPointer(source=source, data_type=data_type)
