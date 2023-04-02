@@ -3,7 +3,7 @@ from typing import List, SupportsInt, Type, Union
 
 from .consts import LITTLE_ENDIAN
 from .exceptions import InvalidOperationError
-from .integer import Integer, UInt8
+from .integer import Integer, UInt8, get_type_size
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -29,6 +29,7 @@ class VirtualPointer:
     ):
         self.source = source
         self.offset = offset
+
         self.data_type = data_type
 
     def __add__(self, other):
@@ -80,7 +81,7 @@ class VirtualPointer:
     def add(self, num: int) -> "VirtualPointer":
         """Offset this pointer position."""
         obj = self.copy()
-        obj.offset += num * self.data_type.get_size()
+        obj.offset += num * get_type_size(self.data_type)
         return obj
 
     def sub(self, num: int) -> "VirtualPointer":
@@ -111,7 +112,7 @@ class VirtualPointer:
 
     def read(self, byteorder: Literal["big", "little"] = LITTLE_ENDIAN) -> Integer:
         """Read an integer from source ``bytearray``."""
-        data = self.read_bytes(self.data_type.get_size())
+        data = self.read_bytes(get_type_size(self.data_type))
         return self.data_type.from_bytes(data, byteorder=byteorder)
 
     def write(

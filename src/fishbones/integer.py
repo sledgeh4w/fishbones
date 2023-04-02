@@ -1,25 +1,13 @@
 import ctypes
 import re
 import sys
-from ctypes import (
-    c_int8,
-    c_int16,
-    c_int32,
-    c_int64,
-    c_uint8,
-    c_uint16,
-    c_uint32,
-    c_uint64,
-)
 from typing import (
-    ClassVar,
     Iterable,
     Optional,
     SupportsBytes,
     SupportsInt,
     Type,
     Union,
-    get_type_hints,
 )
 
 from .consts import LITTLE_ENDIAN
@@ -29,160 +17,194 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal, SupportsIndex
 
-_CtypesInt = Union[
-    c_int8, c_int16, c_int32, c_int64, c_uint8, c_uint16, c_uint32, c_uint64
-]
+
+def _unary_op(func):
+    op = getattr(int, func.__name__)
+
+    def decorator(self):
+        data_type = type(self)
+        return data_type(op(self._impl.value))
+
+    return decorator
 
 
-class _UnaryOp:
-    def __call__(self) -> "Integer":
-        pass
+def _binary_op(func):
+    op = getattr(int, func.__name__)
+
+    def decorator(self, *args):
+        data_type = type(self)
+
+        other = args[0]
+
+        if isinstance(other, Integer):
+            # If their sizes are equal, the type of result is unsigned.
+            if self.size == other.size:
+                data_type = type(other if self.signed else self)
+
+            # If their sizes are not equal, the type of result is
+            # larger size type.
+            else:
+                if self.size < other.size:
+                    data_type = type(other)
+                    self, other = other, self
+
+                else:
+                    data_type = type(self)
+
+        elif not hasattr(other, "__int__"):
+            return NotImplemented
+
+        return data_type(op(self._impl.value, int(other)))
+
+    return decorator
 
 
-class _BinaryOp:
-    def __call__(self, other: SupportsInt) -> "Integer":
-        pass
+def _comparison(func):
+    cmp = getattr(int, func.__name__)
+
+    def decorator(self, other):
+        if not hasattr(other, "__int__"):
+            return False
+
+        return cmp(self._impl.value, int(other))
+
+    return decorator
 
 
-class _ComparisonOp:
-    def __call__(self, other: SupportsInt) -> bool:
-        pass
-
-
-class IntMeta(type):
-    """Metaclass of integer type."""
-
-    def __init__(cls, name, bases, attr_dict):
-        super().__init__(name, bases, attr_dict)
-
-        cls_name = cls.__name__
-
-        setattr(cls, "_cls", getattr(ctypes, "c_%s" % cls_name.lower()))
-        setattr(cls, "_size", int(re.match(r"(U*)Int(\d+)", cls_name).group(2)) // 8)
-        setattr(cls, "_signed", bool(re.match(r"Int\d+", cls_name)))
-
-        for name, t_hint in get_type_hints(_Integer).items():
-            if t_hint in (_BinaryOp, _UnaryOp):
-                setattr(cls, name, cls._build_operation(name))
-
-            elif t_hint == _ComparisonOp:
-                setattr(cls, name, cls._build_comparison(name))
-
-        for name in ("__eq__", "__ne__"):
-            setattr(cls, name, cls._build_comparison(name))
-
-    @staticmethod
-    def _build_operation(func_name):
-        """Build operation method.
-
-        If it is a unary operation, the result is still the own type.
-        If the type of another operand is ``Int`` and is inconsistent with the
-        own type, they result will be converted to larger size or unsigned type.
-        If another operand is ``int`` or can be converted to ``int``, the result
-        will be converted to the own type.
-        """
-
-        try:
-            operator = getattr(int, func_name)
-        except AttributeError:
-            return None
-
-        def decorator(self, *args):
-            data_type = type(self)
-
-            # If a binary operation
-            if args:
-                other = args[0]
-
-                if isinstance(other, Integer):
-                    # If their sizes are equal, the type of result is unsigned.
-                    if self.get_size() == other.get_size():
-                        data_type = type(other if self.get_signed() else self)
-
-                    # If their sizes are not equal, the type of result is
-                    # larger size type.
-                    else:
-                        if self.get_size() < other.get_size():
-                            data_type = type(other)
-                            self, other = other, self
-
-                        else:
-                            data_type = type(self)
-
-                elif not hasattr(other, "__int__"):
-                    return NotImplemented
-
-                return data_type(operator(self._impl.value, int(other)))
-
-            return data_type(operator(self._impl.value))
-
-        return decorator
-
-    @staticmethod
-    def _build_comparison(func_name):
-        """Build comparison method."""
-
-        def decorator(self, other):
-            if not hasattr(other, "__int__"):
-                return False
-
-            func = getattr(int, func_name)
-            return func(self._impl.value, int(other))
-
-        return decorator
-
-
-class _Integer:
-    """Type hint for integer type."""
-
-    _size: ClassVar[int]
-    _signed: ClassVar[bool]
-
-    _cls: Type[_CtypesInt]
-    _impl: _CtypesInt
-
-    __neg__: _UnaryOp
-    __pos__: _UnaryOp
-    __abs__: _UnaryOp
-    __add__: _BinaryOp
-    __radd__: _BinaryOp
-    __sub__: _BinaryOp
-    __rsub__: _BinaryOp
-    __mul__: _BinaryOp
-    __rmul__: _BinaryOp
-    __truediv__: _BinaryOp
-    __rtruediv__: _BinaryOp
-    __floordiv__: _BinaryOp
-    __rfloordiv__: _BinaryOp
-    __mod__: _BinaryOp
-    __rmod__: _BinaryOp
-    __invert__: _UnaryOp
-    __and__: _BinaryOp
-    __rand__: _BinaryOp
-    __or__: _BinaryOp
-    __ror__: _BinaryOp
-    __xor__: _BinaryOp
-    __rxor__: _BinaryOp
-    __lshift__: _BinaryOp
-    __rlshift__: _BinaryOp
-    __rshift__: _BinaryOp
-    __rrshift__: _BinaryOp
-    __gt__: _ComparisonOp
-    __ge__: _ComparisonOp
-    __le__: _ComparisonOp
-    __lt__: _ComparisonOp
-
-
-class Integer(_Integer):
+class Integer:
     """Base class of integer type."""
 
     def __init__(self, x: SupportsInt):
-        if not getattr(self, "_cls"):
-            raise TypeError(
-                "This class is only used for inheritance, don't instantiate it"
-            )
+        ctypes_cls = getattr(ctypes, "c_%s" % self.__class__.__name__.lower())
+        self._impl = ctypes_cls(int(x))
 
-        self._impl = self._cls(int(x))
+    @_unary_op
+    def __neg__(self):
+        pass
+
+    @_unary_op
+    def __pos__(self):
+        pass
+
+    @_unary_op
+    def __abs__(self):
+        pass
+
+    @_binary_op
+    def __add__(self, other):
+        pass
+
+    @_binary_op
+    def __radd__(self, other):
+        pass
+
+    @_binary_op
+    def __sub__(self, other):
+        pass
+
+    @_binary_op
+    def __rsub__(self, other):
+        pass
+
+    @_binary_op
+    def __mul__(self, other):
+        pass
+
+    @_binary_op
+    def __rmul__(self, other):
+        pass
+
+    @_binary_op
+    def __truediv__(self, other):
+        pass
+
+    @_binary_op
+    def __rtruediv__(self, other):
+        pass
+
+    @_binary_op
+    def __floordiv__(self, other):
+        pass
+
+    @_binary_op
+    def __rfloordiv__(self, other):
+        pass
+
+    @_binary_op
+    def __mod__(self, other):
+        pass
+
+    @_binary_op
+    def __rmod__(self, other):
+        pass
+
+    @_unary_op
+    def __invert__(self):
+        pass
+
+    @_binary_op
+    def __and__(self, other):
+        pass
+
+    @_binary_op
+    def __rand__(self, other):
+        pass
+
+    @_binary_op
+    def __or__(self, other):
+        pass
+
+    @_binary_op
+    def __ror__(self, other):
+        pass
+
+    @_binary_op
+    def __xor__(self, other):
+        pass
+
+    @_binary_op
+    def __rxor__(self, other):
+        pass
+
+    @_binary_op
+    def __lshift__(self, other):
+        pass
+
+    @_binary_op
+    def __rlshift__(self, other):
+        pass
+
+    @_binary_op
+    def __rshift__(self, other):
+        pass
+
+    @_binary_op
+    def __rrshift__(self, other):
+        pass
+
+    @_comparison
+    def __eq__(self, other):
+        pass
+
+    @_comparison
+    def __ne__(self, other):
+        pass
+
+    @_comparison
+    def __gt__(self, other):
+        pass
+
+    @_comparison
+    def __ge__(self, other):
+        pass
+
+    @_comparison
+    def __lt__(self, other):
+        pass
+
+    @_comparison
+    def __le__(self, other):
+        pass
 
     def __int__(self) -> int:
         return int(self._impl.value)
@@ -190,15 +212,13 @@ class Integer(_Integer):
     def __str__(self) -> str:
         return str(self.__int__())
 
-    @classmethod
-    def get_size(cls) -> int:
-        """Get size (bytes) of this type."""
-        return cls._size
+    @property
+    def size(self) -> int:
+        return get_type_size(self.__class__)
 
-    @classmethod
-    def get_signed(cls) -> bool:
-        """Get signed of this type."""
-        return cls._signed
+    @property
+    def signed(self) -> bool:
+        return get_type_signed(self.__class__)
 
     @classmethod
     def from_bytes(
@@ -207,14 +227,16 @@ class Integer(_Integer):
         byteorder: Literal["big", "little"] = LITTLE_ENDIAN,
     ):
         """Return a value of this type from given bytes"""
-        return cls(int.from_bytes(data, byteorder=byteorder, signed=cls.get_signed()))
+        return cls(
+            int.from_bytes(data, byteorder=byteorder, signed=get_type_signed(cls))
+        )
 
     def to_bytes(self, byteorder: Literal["big", "little"] = LITTLE_ENDIAN) -> bytes:
         """Covert this value to bytes."""
         return int(self).to_bytes(
-            length=self.get_size(),
+            length=self.size,
             byteorder=byteorder,
-            signed=self.get_signed(),
+            signed=self.signed,
         )
 
     @staticmethod
@@ -247,41 +269,44 @@ class Integer(_Integer):
 
         if size is not None and signed is not None:
             for int_type in int_types:
-                if int_type.get_size() == size and int_type.get_signed() == signed:
+                if (
+                    get_type_size(int_type) == size
+                    and get_type_signed(int_type) == signed
+                ):
                     return int_type
 
         raise ValueError("No matched type")
 
 
-class Int8(Integer, metaclass=IntMeta):
+class Int8(Integer):
     """Int8"""
 
 
-class Int16(Integer, metaclass=IntMeta):
+class Int16(Integer):
     """Int16"""
 
 
-class Int32(Integer, metaclass=IntMeta):
+class Int32(Integer):
     """Int32"""
 
 
-class Int64(Integer, metaclass=IntMeta):
+class Int64(Integer):
     """Int64"""
 
 
-class UInt8(Integer, metaclass=IntMeta):
+class UInt8(Integer):
     """UInt8"""
 
 
-class UInt16(Integer, metaclass=IntMeta):
+class UInt16(Integer):
     """UInt16"""
 
 
-class UInt32(Integer, metaclass=IntMeta):
+class UInt32(Integer):
     """UInt32"""
 
 
-class UInt64(Integer, metaclass=IntMeta):
+class UInt64(Integer):
     """UInt64"""
 
 
@@ -323,3 +348,17 @@ def uint32(x: SupportsInt) -> UInt32:
 def uint64(x: SupportsInt) -> UInt64:
     """Shorthand for `UInt64(x)`."""
     return UInt64(x)
+
+
+def get_type_size(t: Type[Integer]) -> int:
+    """Get size (bytes) of the type."""
+    match_obj = re.match(r"(U*)Int(\d+)", t.__name__)
+    if not match_obj:
+        raise ValueError("Invalid type")
+
+    return int(match_obj.group(2)) // 8
+
+
+def get_type_signed(t: Type[Integer]) -> bool:
+    """Get signed of the type."""
+    return bool(re.match(r"Int\d+", t.__name__))
