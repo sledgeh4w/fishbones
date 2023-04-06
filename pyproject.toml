@@ -5,7 +5,7 @@ description = "Library for implementing decompiled code."
 readme = "README.md"
 license = "MIT"
 authors = [
-    "Sh4w <sh4w0911@gmail.com>",
+    "Sh4w <sledgeh4w@gmail.com>",
 ]
 classifiers = [
     "License :: OSI Approved :: MIT License",
