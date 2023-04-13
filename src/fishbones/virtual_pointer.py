@@ -35,7 +35,13 @@ class VirtualPointer:
     def __add__(self, other):
         return self.add(other)
 
+    def __radd__(self, other):
+        return self.add(other)
+
     def __sub__(self, other):
+        return self.sub(other)
+
+    def __rsub__(self, other):
         return self.sub(other)
 
     def __eq__(self, other):

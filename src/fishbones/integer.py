@@ -2,12 +2,14 @@ import ctypes
 import re
 import sys
 from typing import (
+    Callable,
     Iterable,
     Optional,
     SupportsBytes,
     SupportsInt,
     Type,
     Union,
+    get_type_hints,
 )
 
 from .consts import LITTLE_ENDIAN
@@ -18,196 +20,118 @@ else:
     from typing_extensions import Literal, SupportsIndex
 
 
-def _unary_op(func):
-    op = getattr(int, func.__name__)
-
-    def decorator(self):
-        data_type = type(self)
-        return data_type(op(self._impl.value))
-
-    return decorator
+class _UnaryOp:
+    def __call__(self) -> "Integer":
+        pass
 
 
-def _binary_op(func):
-    op = getattr(int, func.__name__)
-
-    def decorator(self, *args):
-        data_type = type(self)
-
-        other = args[0]
-
-        if isinstance(other, Integer):
-            # If their sizes are equal, the type of result is unsigned.
-            if self.size == other.size:
-                data_type = type(other if self.signed else self)
-
-            # If their sizes are not equal, the type of result is
-            # larger size type.
-            else:
-                if self.size < other.size:
-                    data_type = type(other)
-                    self, other = other, self
-
-                else:
-                    data_type = type(self)
-
-        elif not hasattr(other, "__int__"):
-            return NotImplemented
-
-        return data_type(op(self._impl.value, int(other)))
-
-    return decorator
+class _BinaryOp:
+    def __call__(self, other: SupportsInt) -> "Integer":
+        pass
 
 
-def _comparison(func):
-    cmp = getattr(int, func.__name__)
-
-    def decorator(self, other):
-        if not hasattr(other, "__int__"):
-            return False
-
-        return cmp(self._impl.value, int(other))
-
-    return decorator
+_ComparisonOp = Callable[[object, object], bool]
 
 
-class Integer:
+class IntMeta(type):
+    """Metaclass of integer type."""
+
+    def __init__(cls, name, bases, attr_dict):
+        super().__init__(name, bases, attr_dict)
+
+        for name, hint_type in get_type_hints(cls).items():
+            if hint_type in (_BinaryOp, _UnaryOp):
+                setattr(cls, name, cls.build_operator(name))
+
+            elif hint_type == _ComparisonOp:
+                setattr(cls, name, cls.build_operator(name, is_comparison=True))
+
+    @staticmethod
+    def build_operator(func_name: str, is_comparison: bool = False):
+        """Build operation method to integer type."""
+        int_func = getattr(int, func_name)
+
+        def decorator(*args):
+            self = args[0]
+            result_type = type(self)
+
+            # If a binary operation
+            if len(args) > 1:
+                other = args[1]
+
+                if is_comparison:
+                    if isinstance(other, int) or isinstance(other, Integer):
+                        return int_func(int(self), int(other))
+
+                    return int_func(int(self), other)
+
+                if isinstance(other, Integer):
+                    # If their sizes are equal, the type of result is unsigned.
+                    if self.size == other.size:
+                        result_type = type(other if self.signed else self)
+
+                    # If their sizes are not equal, the type of result is
+                    # larger size type.
+                    else:
+                        if self.size < other.size:
+                            result_type = type(other)
+                            self, other = other, self
+
+                        else:
+                            result_type = type(self)
+
+                elif not hasattr(other, "__int__"):
+                    return NotImplemented
+
+                return result_type(int_func(int(self), int(other)))
+
+            return result_type(int_func(int(self)))
+
+        return decorator
+
+
+class Integer(metaclass=IntMeta):
     """Base class of integer type."""
 
     def __init__(self, x: SupportsInt):
         ctypes_cls = getattr(ctypes, "c_%s" % self.__class__.__name__.lower())
-        self._impl = ctypes_cls(int(x))
+        self._value = ctypes_cls(int(x))
 
-    @_unary_op
-    def __neg__(self):
-        pass
-
-    @_unary_op
-    def __pos__(self):
-        pass
-
-    @_unary_op
-    def __abs__(self):
-        pass
-
-    @_binary_op
-    def __add__(self, other):
-        pass
-
-    @_binary_op
-    def __radd__(self, other):
-        pass
-
-    @_binary_op
-    def __sub__(self, other):
-        pass
-
-    @_binary_op
-    def __rsub__(self, other):
-        pass
-
-    @_binary_op
-    def __mul__(self, other):
-        pass
-
-    @_binary_op
-    def __rmul__(self, other):
-        pass
-
-    @_binary_op
-    def __truediv__(self, other):
-        pass
-
-    @_binary_op
-    def __rtruediv__(self, other):
-        pass
-
-    @_binary_op
-    def __floordiv__(self, other):
-        pass
-
-    @_binary_op
-    def __rfloordiv__(self, other):
-        pass
-
-    @_binary_op
-    def __mod__(self, other):
-        pass
-
-    @_binary_op
-    def __rmod__(self, other):
-        pass
-
-    @_unary_op
-    def __invert__(self):
-        pass
-
-    @_binary_op
-    def __and__(self, other):
-        pass
-
-    @_binary_op
-    def __rand__(self, other):
-        pass
-
-    @_binary_op
-    def __or__(self, other):
-        pass
-
-    @_binary_op
-    def __ror__(self, other):
-        pass
-
-    @_binary_op
-    def __xor__(self, other):
-        pass
-
-    @_binary_op
-    def __rxor__(self, other):
-        pass
-
-    @_binary_op
-    def __lshift__(self, other):
-        pass
-
-    @_binary_op
-    def __rlshift__(self, other):
-        pass
-
-    @_binary_op
-    def __rshift__(self, other):
-        pass
-
-    @_binary_op
-    def __rrshift__(self, other):
-        pass
-
-    @_comparison
-    def __eq__(self, other):
-        pass
-
-    @_comparison
-    def __ne__(self, other):
-        pass
-
-    @_comparison
-    def __gt__(self, other):
-        pass
-
-    @_comparison
-    def __ge__(self, other):
-        pass
-
-    @_comparison
-    def __lt__(self, other):
-        pass
-
-    @_comparison
-    def __le__(self, other):
-        pass
+    __neg__: _UnaryOp
+    __pos__: _UnaryOp
+    __abs__: _UnaryOp
+    __add__: _BinaryOp
+    __radd__: _BinaryOp
+    __sub__: _BinaryOp
+    __rsub__: _BinaryOp
+    __mul__: _BinaryOp
+    __rmul__: _BinaryOp
+    __truediv__: _BinaryOp
+    __rtruediv__: _BinaryOp
+    __floordiv__: _BinaryOp
+    __rfloordiv__: _BinaryOp
+    __mod__: _BinaryOp
+    __rmod__: _BinaryOp
+    __invert__: _UnaryOp
+    __and__: _BinaryOp
+    __rand__: _BinaryOp
+    __or__: _BinaryOp
+    __ror__: _BinaryOp
+    __xor__: _BinaryOp
+    __rxor__: _BinaryOp
+    __lshift__: _BinaryOp
+    __rlshift__: _BinaryOp
+    __rshift__: _BinaryOp
+    __rrshift__: _BinaryOp
+    __eq__: _ComparisonOp
+    __ne__: _ComparisonOp
+    __gt__: _ComparisonOp
+    __ge__: _ComparisonOp
+    __le__: _ComparisonOp
+    __lt__: _ComparisonOp
 
     def __int__(self) -> int:
-        return int(self._impl.value)
+        return int(self._value.value)
 
     def __str__(self) -> str:
         return str(self.__int__())
