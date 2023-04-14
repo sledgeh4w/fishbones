@@ -1,8 +1,8 @@
 import ctypes
+import operator
 import re
 import sys
 from typing import (
-    Callable,
     Iterable,
     Optional,
     SupportsBytes,
@@ -30,7 +30,9 @@ class _BinaryOp:
         pass
 
 
-_ComparisonOp = Callable[[object, object], bool]
+class _ComparisonOp:
+    def __call__(self, other: object) -> bool:
+        pass
 
 
 class IntMeta(type):
@@ -46,46 +48,46 @@ class IntMeta(type):
             elif hint_type == _ComparisonOp:
                 setattr(cls, name, cls.build_operator(name, is_comparison=True))
 
+        for name in ("__eq__", "__ne__"):
+            setattr(cls, name, cls.build_operator(name, is_comparison=True))
+
     @staticmethod
     def build_operator(func_name: str, is_comparison: bool = False):
         """Build operation method to integer type."""
-        int_func = getattr(int, func_name)
+        f = getattr(operator, func_name, None) or getattr(int, func_name)
 
         def decorator(*args):
-            self = args[0]
-            result_type = type(self)
+            x = args[0]
+            result_type = type(x)
 
             # If a binary operation
             if len(args) > 1:
-                other = args[1]
+                y = args[1]
 
                 if is_comparison:
-                    if isinstance(other, int) or isinstance(other, Integer):
-                        return int_func(int(self), int(other))
+                    return f(int(x), y)
 
-                    return int_func(int(self), other)
-
-                if isinstance(other, Integer):
+                if isinstance(y, Integer):
                     # If their sizes are equal, the type of result is unsigned.
-                    if self.size == other.size:
-                        result_type = type(other if self.signed else self)
+                    if x.size == y.size:
+                        result_type = type(y if x.signed else x)
 
                     # If their sizes are not equal, the type of result is
                     # larger size type.
                     else:
-                        if self.size < other.size:
-                            result_type = type(other)
-                            self, other = other, self
+                        if x.size < y.size:
+                            result_type = type(y)
+                            x, y = y, x
 
                         else:
-                            result_type = type(self)
+                            result_type = type(x)
 
-                elif not hasattr(other, "__int__"):
+                elif not hasattr(y, "__int__"):
                     return NotImplemented
 
-                return result_type(int_func(int(self), int(other)))
+                return result_type(f(int(x), int(y)))
 
-            return result_type(int_func(int(self)))
+            return result_type(f(int(x)))
 
         return decorator
 
@@ -123,8 +125,6 @@ class Integer(metaclass=IntMeta):
     __rlshift__: _BinaryOp
     __rshift__: _BinaryOp
     __rrshift__: _BinaryOp
-    __eq__: _ComparisonOp
-    __ne__: _ComparisonOp
     __gt__: _ComparisonOp
     __ge__: _ComparisonOp
     __le__: _ComparisonOp
