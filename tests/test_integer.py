@@ -67,6 +67,23 @@ def test_comparison(x, y, op, expected):
 
 
 @pytest.mark.parametrize(
+    "x,y,op,expected",
+    [
+        (int8(1), 1.1, operator.gt, False),
+        (int8(1), 0.9, operator.gt, True),
+        (1.1, int8(1), operator.gt, True),
+        (0.9, int8(1), operator.gt, False),
+        (int8(1), 1.1, operator.eq, False),
+        (int8(1), 1.1, operator.ne, True),
+    ],
+)
+def test_comparison_with_float(x, y, op, expected):
+    result = op(x, y)
+
+    assert result == expected
+
+
+@pytest.mark.parametrize(
     "x,y,expected",
     [
         (int8(1), uint8(1), UInt8),
