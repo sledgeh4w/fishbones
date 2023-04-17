@@ -51,7 +51,7 @@ v = p.add(4).read()
 p.cast('uint32').add(1).write(v)
 ```
 
-In some cases, decompilers may use their built-in functions in the output. Fishbones implements some from IDA and Ghidra. You can look up from `fishbones.decompiler_builtins`.
+In some cases, decompilers may use their built-in functions in the output. Fishbones implements some functions from IDA and Ghidra. You can look up from `fishbones.decompiler_builtins`.
 
 ```python
 from fishbones import uint32
