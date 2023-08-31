@@ -2,7 +2,6 @@ import sys
 from typing import List, SupportsInt, Type, Union
 
 from .consts import LITTLE_ENDIAN
-from .exceptions import InvalidOperationError
 from .integer import Integer, UInt8, get_type_size
 
 if sys.version_info >= (3, 8):
@@ -65,7 +64,7 @@ class VirtualPointer:
                 self._data_type = Integer.get_type(type_name=type_or_name)
 
             except ValueError as e:
-                raise InvalidOperationError("Unsupported type") from e
+                raise ValueError("Unsupported type") from e
 
         elif isinstance(type_or_name, type) and issubclass(type_or_name, Integer):
             self._data_type = type_or_name
@@ -103,7 +102,7 @@ class VirtualPointer:
     def read_bytes(self, size: int) -> bytes:
         """Read bytes from source ``bytearray``."""
         if self.offset + size > len(self.source):
-            raise InvalidOperationError("Read out of range")
+            raise ValueError("Read out of range")
 
         return bytes(self.source[self.offset : self.offset + size])
 
@@ -114,7 +113,7 @@ class VirtualPointer:
                 self.source[self.offset + i] = int(v)
 
         except IndexError as e:
-            raise InvalidOperationError("Write out of range") from e
+            raise ValueError("Write out of range") from e
 
     def read(self, byteorder: Literal["big", "little"] = LITTLE_ENDIAN) -> Integer:
         """Read an integer from source ``bytearray``."""
